@@ -23,6 +23,7 @@
   flex: 1;
   overflow: hidden;
   position: relative;
+  margin-left: 320px; /* Account for fixed toolbar width */
 }
 
 /* Global styles for better appearance */

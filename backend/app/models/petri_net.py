@@ -13,6 +13,7 @@ class NodeData(BaseModel):
     isInitialMarking: Optional[bool] = False
     isFinalMarking: Optional[bool] = False
     isInvisible: Optional[bool] = False
+    attachPoints: Optional[int] = 4  # Default 4 attach points (top, right, bottom, left)
 
 class Node(BaseModel):
     id: str
@@ -26,11 +27,14 @@ class Edge(BaseModel):
     target: str
     sourceHandle: Optional[str] = None
     targetHandle: Optional[str] = None
+    weight: Optional[int] = 1  # Default weight is 1
 
 class PetriNetData(BaseModel):
     nodes: List[Node]
     edges: List[Edge]
     statistics: Dict[str, Any]
+    networkId: Optional[str] = None
+    networkName: Optional[str] = None
 
 class UploadResponse(BaseModel):
     success: bool

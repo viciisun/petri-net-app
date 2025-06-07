@@ -1,27 +1,143 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import usePetriNetStore from '../store/petriNetStore';
 import LayoutService from '../services/layoutService';
-import { LayoutType } from '../types';
+import apiService from '../services/apiService';
 import styles from './Header.module.css';
 
 const Header = () => {
   const fileInputRef = useRef(null);
+  const [showImportMenu, setShowImportMenu] = useState(false);
+  const [showSaveMenu, setShowSaveMenu] = useState(false);
+  
   const {
     nodes,
     edges,
-    currentLayout,
+    layoutDirection,
     isLoading,
     error,
+    networkId,
+    networkName,
+    statistics,
     setNodesAndEdges,
-    setCurrentLayout,
+    setLayoutDirection,
     setLoading,
     setError,
     clearError,
     uploadPnmlFile
   } = usePetriNetStore();
 
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(`.${styles.dropdownContainer}`)) {
+        setShowImportMenu(false);
+        setShowSaveMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleImportClick = () => {
+    setShowImportMenu(!showImportMenu);
+    setShowSaveMenu(false);
+  };
+
+  const handleSaveClick = () => {
+    setShowSaveMenu(!showSaveMenu);
+    setShowImportMenu(false);
+  };
+
+  const handlePnmlImportClick = () => {
+    // Set file input to accept only PNML files
+    fileInputRef.current.accept = '.pnml,.xml';
     fileInputRef.current?.click();
+    setShowImportMenu(false);
+  };
+
+  const handleApnmlImportClick = () => {
+    // Set file input to accept only APNML files
+    fileInputRef.current.accept = '.apnml';
+    fileInputRef.current?.click();
+    setShowImportMenu(false);
+  };
+
+  const handleEventLogImportClick = () => {
+    // TODO: Implement event log import in future
+    alert('Event Log import will be supported in future versions');
+    setShowImportMenu(false);
+  };
+
+  const handleImageExport = async (format) => {
+    try {
+      // Get the React Flow viewport element
+      const reactFlowElement = document.querySelector('.react-flow__viewport');
+      if (!reactFlowElement) {
+        alert('No Petri net to export');
+        return;
+      }
+
+      // Use html2canvas for image export
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(reactFlowElement, {
+        backgroundColor: '#fafafa',
+        scale: 2, // Higher quality
+      });
+
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `petri-net.${format}`;
+      link.href = canvas.toDataURL(`image/${format}`);
+      link.click();
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Export failed. Please try again.');
+    }
+    setShowSaveMenu(false);
+  };
+
+  const handlePnmlExport = async () => {
+    try {
+      if (nodes.length === 0) {
+        alert('No Petri net to export');
+        setShowSaveMenu(false);
+        return;
+      }
+
+      setLoading(true);
+      
+      // Prepare data for export
+      const petriNetData = {
+        nodes: nodes,
+        edges: edges,
+        statistics: statistics,
+        networkId: networkId,
+        networkName: networkName
+      };
+
+      // Call API to export PNML
+      const { blob, filename } = await apiService.exportPnml(petriNetData);
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('PNML export failed:', error);
+      setError(`PNML export failed: ${error.message}`);
+    } finally {
+      setLoading(false);
+      setShowSaveMenu(false);
+    }
   };
 
   const handleFileChange = async (event) => {
@@ -34,13 +150,16 @@ const Header = () => {
       
       // Apply layout to the nodes received from backend
       if (response.success && response.data) {
-        const { nodes: newNodes, edges: newEdges } = await LayoutService.applyLayout(
+        console.log('Original edges from backend:', response.data.edges);
+        
+        const { nodes: newNodes, edges: newEdges } = LayoutService.applyLayout(
           response.data.nodes,
           response.data.edges,
-          currentLayout
+          layoutDirection
         );
         
-        setNodesAndEdges(newNodes, newEdges);
+        console.log('Processed edges after layout:', newEdges);
+      setNodesAndEdges(newNodes, newEdges);
       }
       
     } catch (err) {
@@ -54,21 +173,21 @@ const Header = () => {
     }
   };
 
-  const handleLayoutChange = async (newLayout) => {
-    if (newLayout === currentLayout || nodes.length === 0) return;
+  const handleLayoutDirectionChange = (newDirection) => {
+    if (newDirection === layoutDirection || nodes.length === 0) return;
 
     setLoading(true);
     clearError();
 
     try {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = await LayoutService.relayoutNodes(
+      const { nodes: layoutedNodes, edges: layoutedEdges } = LayoutService.relayoutNodes(
         nodes,
         edges,
-        newLayout
+        newDirection
       );
       
       setNodesAndEdges(layoutedNodes, layoutedEdges);
-      setCurrentLayout(newLayout);
+      setLayoutDirection(newDirection);
     } catch (err) {
       setError(`Layout failed: ${err.message}`);
       console.error('Layout failed:', err);
@@ -96,39 +215,114 @@ const Header = () => {
             <label className={styles.label}>Layout:</label>
             <div className={styles.buttonGroup}>
               <button
-                onClick={() => handleLayoutChange(LayoutType.DAGRE)}
+                onClick={() => handleLayoutDirectionChange('horizontal')}
                 disabled={isLoading}
                 className={`${styles.button} ${
-                  currentLayout === LayoutType.DAGRE ? styles.activeButton : styles.secondaryButton
+                  layoutDirection === 'horizontal' ? styles.activeButton : styles.secondaryButton
                 }`}
               >
-                Dagre
+                Horizontal
               </button>
               <button
-                onClick={() => handleLayoutChange(LayoutType.ELKJS)}
+                onClick={() => handleLayoutDirectionChange('vertical')}
                 disabled={isLoading}
                 className={`${styles.button} ${
-                  currentLayout === LayoutType.ELKJS ? styles.activeButton : styles.secondaryButton
+                  layoutDirection === 'vertical' ? styles.activeButton : styles.secondaryButton
                 }`}
               >
-                Elkjs
+                Vertical
               </button>
             </div>
           </div>
         )}
 
-        <button
-          onClick={handleImportClick}
-          disabled={isLoading}
-          className={`${styles.button} ${styles.primaryButton}`}
-        >
-          {isLoading ? 'Importing...' : 'Import PNML'}
-        </button>
+        <div className={styles.dropdownContainer}>
+          <button
+            onClick={handleImportClick}
+            disabled={isLoading}
+            className={`${styles.button} ${styles.primaryButton} ${showImportMenu ? styles.active : ''}`}
+          >
+            Import
+            <span className={styles.dropdownArrow}>▼</span>
+          </button>
+          
+          {showImportMenu && (
+            <div className={styles.dropdownMenu}>
+              <button
+                onClick={handlePnmlImportClick}
+                className={styles.dropdownItem}
+                disabled={isLoading}
+              >
+                <span className={styles.itemIcon}>📄</span>
+                PNML Model
+              </button>
+              <button
+                onClick={handleApnmlImportClick}
+                className={styles.dropdownItem}
+                disabled={isLoading}
+              >
+                <span className={styles.itemIcon}>📋</span>
+                APNML Model
+              </button>
+              <button
+                onClick={handleEventLogImportClick}
+                className={styles.dropdownItem}
+                disabled
+              >
+                <span className={styles.itemIcon}>📊</span>
+                Event Log File
+                <span className={styles.comingSoon}>(Coming Soon)</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.dropdownContainer}>
+          <button
+            onClick={handleSaveClick}
+            disabled={isLoading || nodes.length === 0}
+            className={`${styles.button} ${styles.secondaryButton} ${showSaveMenu ? styles.active : ''}`}
+          >
+            Save
+            <span className={styles.dropdownArrow}>▼</span>
+          </button>
+          
+          {showSaveMenu && (
+            <div className={styles.dropdownMenu}>
+              <div className={styles.dropdownSection}>
+                <div className={styles.sectionTitle}>Image Formats</div>
+                <button
+                  onClick={() => handleImageExport('png')}
+                  className={styles.dropdownItem}
+                >
+                  <span className={styles.itemIcon}>🖼️</span>
+                  PNG Image
+                </button>
+                <button
+                  onClick={() => handleImageExport('jpeg')}
+                  className={styles.dropdownItem}
+                >
+                  <span className={styles.itemIcon}>🖼️</span>
+                  JPEG Image
+                </button>
+              </div>
+              <div className={styles.dropdownDivider}></div>
+              <button
+                onClick={handlePnmlExport}
+                className={styles.dropdownItem}
+                disabled={isLoading || nodes.length === 0}
+              >
+                <span className={styles.itemIcon}>📄</span>
+                PNML Model
+              </button>
+            </div>
+          )}
+        </div>
         
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pnml,.xml"
+          accept=".pnml,.apnml,.xml"
           onChange={handleFileChange}
           style={{ display: 'none' }}
         />

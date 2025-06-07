@@ -5,10 +5,10 @@ export const PetriNetElementType = {
   ARC: 'arc'
 };
 
-// Layout Types
-export const LayoutType = {
-  DAGRE: 'dagre',
-  ELKJS: 'elkjs'
+// Layout Directions
+export const LayoutDirection = {
+  HORIZONTAL: 'horizontal',
+  VERTICAL: 'vertical'
 };
 
 // Node Types for React Flow

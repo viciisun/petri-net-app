@@ -1,0 +1,175 @@
+.networkPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.networkInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.nameContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editBtn {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.editBtn:hover {
+  background: #f0f8ff;
+}
+
+.editContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nameInput {
+  padding: 4px 6px;
+  border: 1px solid #007bff;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.nameInput:focus {
+  outline: none;
+  border-color: #0056b3;
+}
+
+.editButtons {
+  display: flex;
+  gap: 4px;
+}
+
+.saveBtn, .cancelBtn {
+  padding: 2px 6px;
+  border: none;
+  border-radius: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.saveBtn {
+  background: #28a745;
+  color: white;
+}
+
+.saveBtn:hover {
+  background: #218838;
+}
+
+.cancelBtn {
+  background: #dc3545;
+  color: white;
+}
+
+.cancelBtn:hover {
+  background: #c82333;
+}
+
+.statisticsSection, .detailsSection {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.statLabel {
+  color: #666;
+  font-weight: 500;
+}
+
+.statValue {
+  font-weight: 600;
+  color: #333;
+}
+
+.detailsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.detailLabel {
+  color: #666;
+  font-weight: 500;
+}
+
+.detailValue {
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.positive {
+  background: #d4edda;
+  color: #155724;
+}
+
+.negative {
+  background: #f8d7da;
+  color: #721c24;
+} 

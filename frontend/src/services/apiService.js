@@ -57,6 +57,41 @@ class ApiService {
     }
   }
 
+  async exportPnml(petriNetData) {
+    try {
+      const response = await fetch(`${this.baseURL}/api/export-pnml`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(petriNetData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to export PNML');
+      }
+
+      // Get the filename from the response headers
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'petri_net.pnml';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename=(.+)/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Get the PNML content as blob
+      const blob = await response.blob();
+      
+      return { blob, filename };
+    } catch (error) {
+      console.error('Export error:', error);
+      throw error;
+    }
+  }
+
   async healthCheck() {
     try {
       const response = await fetch(`${this.baseURL}/api/health`);

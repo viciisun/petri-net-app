@@ -39,3 +39,59 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 } 
+
+/* Edge hover and selection effects */
+.reactFlow .react-flow__edge:hover .react-flow__edge-path {
+  stroke: #007bff !important;
+  stroke-width: 3px !important;
+}
+
+.reactFlow .react-flow__edge.selected-edge .react-flow__edge-path {
+  stroke: #007bff !important;
+  stroke-width: 3px !important;
+}
+
+.reactFlow .react-flow__edge:hover .react-flow__edge-text {
+  fill: #007bff !important;
+}
+
+.reactFlow .react-flow__edge.selected-edge .react-flow__edge-text {
+  fill: #007bff !important;
+}
+
+/* Reconnection handle styles */
+.reactFlow .react-flow__edge.reconnectable:hover .react-flow__edge-path {
+  cursor: grab;
+}
+
+.reactFlow .react-flow__edge.reconnectable.dragging .react-flow__edge-path {
+  cursor: grabbing;
+}
+
+/* Connection line styling */
+.reactFlow .react-flow__connection-line {
+  stroke: #007bff;
+  stroke-width: 2px;
+  stroke-dasharray: 5,5;
+}
+
+/* Invalid connection styling */
+.reactFlow .react-flow__connection-line.invalid {
+  stroke: #dc3545;
+  stroke-dasharray: 3,3;
+}
+
+/* Node hover states for connection feedback */
+.reactFlow .react-flow__node.connectable {
+  cursor: crosshair;
+}
+
+.reactFlow .react-flow__node.connecting {
+  border: 2px solid #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.reactFlow .react-flow__node.invalid-target {
+  border: 2px solid #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+} 

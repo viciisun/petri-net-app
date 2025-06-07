@@ -1,9 +1,11 @@
 import tempfile
 import os
+import xml.etree.ElementTree as ET
 from typing import Dict, List, Any, Tuple
 import pm4py
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.petri_net.utils import petri_utils
+from pm4py.objects.petri_net.exporter import exporter as pnml_exporter
 from ..models.petri_net import Node, Edge, NodeData, Position, PetriNetData
 
 class PM4PyService:
@@ -22,8 +24,14 @@ class PM4PyService:
             # Parse with PM4Py
             net, initial_marking, final_marking = pm4py.read_pnml(temp_file_path)
             
+            # Extract network information from PNML
+            network_id, network_name = self._extract_network_info(temp_file_path, net)
+            
+            # Extract arc information from PNML
+            arc_ids = self._extract_arc_info(temp_file_path)
+            
             # Convert to React Flow format
-            nodes, edges = self._convert_to_react_flow(net, initial_marking, final_marking)
+            nodes, edges = self._convert_to_react_flow(net, initial_marking, final_marking, arc_ids)
             
             # Calculate statistics
             statistics = self._calculate_statistics(net, initial_marking, final_marking)
@@ -31,7 +39,9 @@ class PM4PyService:
             return PetriNetData(
                 nodes=nodes,
                 edges=edges,
-                statistics=statistics
+                statistics=statistics,
+                networkId=network_id,
+                networkName=network_name
             )
             
         except Exception as e:
@@ -43,7 +53,50 @@ class PM4PyService:
                 if temp_file_path in self.temp_files:
                     self.temp_files.remove(temp_file_path)
     
-    def _convert_to_react_flow(self, net: PetriNet, initial_marking: Marking, final_marking: Marking) -> Tuple[List[Node], List[Edge]]:
+    def _extract_network_info(self, pnml_file_path: str, net: PetriNet) -> Tuple[str, str]:
+        """Extract network ID and name from PNML file"""
+        try:
+            tree = ET.parse(pnml_file_path)
+            root = tree.getroot()
+            
+            # Find the net element
+            net_element = root.find('.//{http://www.pnml.org/version-2009/grammar/pnml}net')
+            if net_element is not None:
+                network_id = net_element.get('id', 'net1')
+                
+                # Find the name element
+                name_element = net_element.find('.//{http://www.pnml.org/version-2009/grammar/pnml}name/{http://www.pnml.org/version-2009/grammar/pnml}text')
+                network_name = name_element.text if name_element is not None else network_id
+                
+                return network_id, network_name
+        except Exception as e:
+            print(f"Error extracting network info: {e}")
+        
+        # Fallback to PM4Py attributes
+        network_id = getattr(net, 'name', None) or 'net1'
+        network_name = getattr(net, 'properties', {}).get('name', network_id) if hasattr(net, 'properties') else network_id
+        return network_id, network_name
+    
+    def _extract_arc_info(self, pnml_file_path: str) -> Dict[str, str]:
+        """Extract arc IDs from PNML file"""
+        arc_ids = {}
+        try:
+            tree = ET.parse(pnml_file_path)
+            root = tree.getroot()
+            
+            # Find all arc elements
+            for arc_element in root.findall('.//{http://www.pnml.org/version-2009/grammar/pnml}arc'):
+                arc_id = arc_element.get('id')
+                source = arc_element.get('source')
+                target = arc_element.get('target')
+                if arc_id and source and target:
+                    arc_ids[f"{source}-{target}"] = arc_id
+        except Exception as e:
+            print(f"Error extracting arc info: {e}")
+        
+        return arc_ids
+    
+    def _convert_to_react_flow(self, net: PetriNet, initial_marking: Marking, final_marking: Marking, arc_ids: Dict[str, str]) -> Tuple[List[Node], List[Edge]]:
         """Convert PM4Py Petri net to React Flow nodes and edges"""
         nodes = []
         edges = []
@@ -75,7 +128,8 @@ class PM4PyService:
                     type="place",
                     tokens=tokens,
                     isInitialMarking=is_initial_marking,
-                    isFinalMarking=is_final_marking
+                    isFinalMarking=is_final_marking,
+                    attachPoints=4
                 )
             )
             nodes.append(node)
@@ -107,7 +161,8 @@ class PM4PyService:
                     label=transition_id,
                     name=transition_name,
                     type="transition",
-                    isInvisible=is_invisible
+                    isInvisible=is_invisible,
+                    attachPoints=4
                 )
             )
             nodes.append(node)
@@ -116,12 +171,23 @@ class PM4PyService:
         for arc in net.arcs:
             source_id = arc.source.name  # Source node ID
             target_id = arc.target.name  # Target node ID
-            edge_id = f"{source_id}-{target_id}"
+            
+            # Use original arc ID from PNML if available, otherwise generate one
+            arc_key = f"{source_id}-{target_id}"
+            edge_id = arc_ids.get(arc_key, arc_key)
+            
+            # Get weight from arc properties if available
+            weight = 1
+            if hasattr(arc, 'weight') and arc.weight:
+                weight = arc.weight
+            elif hasattr(arc, 'properties') and arc.properties:
+                weight = arc.properties.get('weight', 1)
             
             edge = Edge(
                 id=edge_id,
                 source=source_id,
-                target=target_id
+                target=target_id,
+                weight=weight
             )
             edges.append(edge)
         
@@ -157,6 +223,105 @@ class PM4PyService:
         except:
             return False
     
+    def export_to_pnml_string(self, petri_net_data: PetriNetData) -> str:
+        """Export PetriNetData to PNML string format"""
+        try:
+            # Rebuild PM4Py objects from frontend data
+            net, initial_marking, final_marking = self._rebuild_pm4py_objects(petri_net_data)
+            
+            # Export to PNML string
+            pnml_string = pnml_exporter.serialize(net, initial_marking, final_marking=final_marking)
+            
+            # Convert bytes to string if necessary
+            if isinstance(pnml_string, bytes):
+                pnml_string = pnml_string.decode('utf-8')
+            
+            return pnml_string
+            
+        except Exception as e:
+            raise Exception(f"Failed to export PNML: {str(e)}")
+    
+    def _rebuild_pm4py_objects(self, petri_net_data: PetriNetData) -> Tuple[PetriNet, Marking, Marking]:
+        """Rebuild PM4Py objects from frontend PetriNetData"""
+        
+        # Create new Petri net
+        net = PetriNet(petri_net_data.networkId or "exported_net")
+        
+        # Set network name (PM4Py uses the name parameter in constructor)
+        if petri_net_data.networkName and petri_net_data.networkName != net.name:
+            # PM4Py PetriNet name is set in constructor, properties is read-only
+            net._PetriNet__name = petri_net_data.networkName
+        
+        # Create place objects mapping
+        place_objects = {}
+        
+        # Add places
+        for node in petri_net_data.nodes:
+            if node.type == "place":
+                place = PetriNet.Place(node.id)
+                
+                # Add place name as property if different from ID
+                if node.data.name and node.data.name != node.id:
+                    if not hasattr(place, 'properties') or place.properties is None:
+                        place.properties = {}
+                    place.properties["place_name_tag"] = node.data.name
+                
+                net.places.add(place)
+                place_objects[node.id] = place
+        
+        # Create transition objects mapping
+        transition_objects = {}
+        
+        # Add transitions
+        for node in petri_net_data.nodes:
+            if node.type == "transition":
+                # Handle invisible transitions
+                if hasattr(node.data, 'isInvisible') and node.data.isInvisible:
+                    # Invisible transition: no label
+                    transition = PetriNet.Transition(node.id, None)
+                    # Store name in properties
+                    if node.data.name and node.data.name != node.id:
+                        if not hasattr(transition, 'properties') or transition.properties is None:
+                            transition.properties = {}
+                        transition.properties["trans_name_tag"] = node.data.name
+                else:
+                    # Normal transition: use name as label
+                    label = node.data.name if node.data.name else node.id
+                    transition = PetriNet.Transition(node.id, label)
+                
+                net.transitions.add(transition)
+                transition_objects[node.id] = transition
+        
+        # Add arcs
+        for edge in petri_net_data.edges:
+            source_obj = place_objects.get(edge.source) or transition_objects.get(edge.source)
+            target_obj = place_objects.get(edge.target) or transition_objects.get(edge.target)
+            
+            if source_obj and target_obj:
+                arc = petri_utils.add_arc_from_to(source_obj, target_obj, net)
+                # Set weight if specified
+                if hasattr(edge, 'weight') and edge.weight and edge.weight != 1:
+                    arc.weight = edge.weight
+        
+        # Create initial marking
+        initial_marking = Marking()
+        for node in petri_net_data.nodes:
+            if node.type == "place" and hasattr(node.data, 'tokens') and node.data.tokens > 0:
+                place_obj = place_objects[node.id]
+                initial_marking[place_obj] = node.data.tokens
+        
+        # Create final marking
+        final_marking = Marking()
+        for node in petri_net_data.nodes:
+            if (node.type == "place" and 
+                hasattr(node.data, 'isFinalMarking') and 
+                node.data.isFinalMarking):
+                place_obj = place_objects[node.id]
+                # Set to 1 token for final marking (standard convention)
+                final_marking[place_obj] = 1
+        
+        return net, initial_marking, final_marking
+
     def cleanup(self):
         """Clean up any remaining temporary files"""
         for temp_file in self.temp_files:

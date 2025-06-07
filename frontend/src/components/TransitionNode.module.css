@@ -25,6 +25,20 @@
   background: #f8f9fa;
 }
 
+/* Selected state */
+.selected .transitionRect {
+  border-color: #007bff;
+  border-width: 3px;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  background: rgba(0, 123, 255, 0.05);
+}
+
+.selected .transitionName {
+  border-color: #007bff;
+  background: rgba(0, 123, 255, 0.1);
+  color: #0056b3;
+}
+
 .transitionId {
   font-size: 11px;
   font-weight: 600;
@@ -42,7 +56,7 @@
   font-weight: 500;
   text-align: center;
   color: #666;
-  max-width: 110px;
+  max-width: 165px; /* 增加50%: 110px * 1.5 = 165px */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -53,29 +67,7 @@
   border: 1px solid #ddd;
 }
 
-.handle {
-  width: 8px;
-  height: 8px;
-  background: #007bff;
-  border: 2px solid white;
-  border-radius: 50%;
-}
-
-.handle:hover {
-  background: #0056b3;
-}
-
-.sourceHandle {
-  width: 8px;
-  height: 8px;
-  background: #28a745;
-  border: 2px solid white;
-  border-radius: 50%;
-}
-
-.sourceHandle:hover {
-  background: #1e7e34;
-}
+/* Handle styles are now defined inline for better control */
 
 /* Invisible transition styles */
 .invisibleTransition .transitionRect {
