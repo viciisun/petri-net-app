@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<pnml>
+    <net id="net1" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+        <name>
+            <text>af37a8d0-b4a4-494a-8083-3db8a1244a3b [Reduced] [Reduced]</text>
+        </name>
+        <page id="n0">
+            <name>
+                <text/>
+            </name>
+            <place id="n1">
+                <name>
+                    <text>source 1</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="08bbcbc5-0171-43ac-9f93-ca162a05be8e"/>
+                <graphics>
+                    <position x="6.25" y="71.5"/>
+                    <dimension x="12.5" y="12.5"/>
+                </graphics>
+                <initialMarking>
+                    <text>1</text>
+                </initialMarking>
+            </place>
+            <place id="n2">
+                <name>
+                    <text>sink 2</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="47dd77f6-fef4-406a-a1e7-5716a1c26533"/>
+                <graphics>
+                    <position x="258.75" y="53.0"/>
+                    <dimension x="12.5" y="12.5"/>
+                </graphics>
+            </place>
+            <place id="n3">
+                <name>
+                    <text>sink 3</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="6a84aad2-6318-43dc-8ac4-3a24ac0858b0"/>
+                <graphics>
+                    <position x="93.75" y="73.0"/>
+                    <dimension x="12.5" y="12.5"/>
+                </graphics>
+            </place>
+            <place id="n4">
+                <name>
+                    <text>middle 4</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="6b4f0ad9-1a01-479a-87bd-5084bbfdf97c"/>
+                <graphics>
+                    <position x="181.25" y="63.5"/>
+                    <dimension x="12.5" y="12.5"/>
+                </graphics>
+            </place>
+            <transition id="n5">
+                <name>
+                    <text>Attended_lecture</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" activity="Attended_lecture" localNodeID="97f31251-3bd3-4e11-9fc2-fecf41cc3e84"/>
+                <graphics>
+                    <position x="50.0" y="71.5"/>
+                    <dimension x="25.0" y="20.0"/>
+                    <fill color="#FFFFFF"/>
+                </graphics>
+            </transition>
+            <transition id="n6">
+                <name>
+                    <text>Submitted_Assignments</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" activity="Submitted_Assignments" localNodeID="b694aa5f-2a6a-4fda-815e-2f159042777b"/>
+                <graphics>
+                    <position x="137.5" y="62.0"/>
+                    <dimension x="25.0" y="20.0"/>
+                    <fill color="#FFFFFF"/>
+                </graphics>
+            </transition>
+            <transition id="n7">
+                <name>
+                    <text>tau from tree1</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1d53cd2b-6e12-4bda-a4ca-894914906b8f"/>
+                <graphics>
+                    <position x="220.0" y="83.0"/>
+                    <dimension x="15.0" y="15.0"/>
+                </graphics>
+            </transition>
+            <transition id="n8">
+                <name>
+                    <text>tau from tree2</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1e94eca0-a8c4-4894-9526-5c5585ea6a91"/>
+                <graphics>
+                    <position x="220.0" y="53.0"/>
+                    <dimension x="15.0" y="15.0"/>
+                </graphics>
+            </transition>
+            <arc id="arc9" source="n4" target="n7">
+                <name>
+                    <text>middle 4 -[1]-&gt; tau from tree1</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="b9c7c830-2fb3-46c1-bdb2-f4e8f259c1e1"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc10" source="n4" target="n8">
+                <name>
+                    <text>middle 4 -[1]-&gt; tau from tree2</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="86a858f4-a0a4-4415-b9a3-1dc0727aa9da"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc11" source="n1" target="n5">
+                <name>
+                    <text>source 1 -[1]-&gt; Chest_Xray_Completed</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="237ad929-572d-4cbc-927b-33442978971e"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc12" source="n8" target="n2">
+                <name>
+                    <text>tau from tree2 -[1]-&gt; sink 2</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="c424f214-002a-451a-9c9e-32c354d38ef7"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc13" source="n5" target="n3">
+                <name>
+                    <text>Chest_Xray_Completed -[1]-&gt; sink 3</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="58fbbd94-14ab-4a42-8f0c-11833cafc432"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc14" source="n6" target="n4">
+                <name>
+                    <text>furosemide (frusemide)_supplied -[1]-&gt; middle 4</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="8e6e056d-9b78-4c1d-a82c-d7d887423454"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc15" source="n3" target="n6">
+                <name>
+                    <text>sink 3 -[1]-&gt; furosemide (frusemide)_supplied</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="736b7da8-5119-45c6-83dd-90e850a9eca8"/>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+            <arc id="arc16" source="n7" target="n3">
+                <name>
+                    <text>tau from tree1 -[1]-&gt; sink 3</text>
+                </name>
+                <toolspecific tool="ProM" version="6.4" localNodeID="eedb6683-3078-4823-b94c-a38623419cd1"/>
+                <graphics>
+                    <position x="181.25" y="87.0"/>
+                    <position x="137.5" y="87.0"/>
+                </graphics>
+                <arctype>
+                    <text>normal</text>
+                </arctype>
+            </arc>
+        </page>
+        <finalmarkings>
+            <marking>
+                <place idref="n1">
+                    <text>0</text>
+                </place>
+                <place idref="n2">
+                    <text>1</text>
+                </place>
+                <place idref="n3">
+                    <text>0</text>
+                </place>
+                <place idref="n4">
+                    <text>0</text>
+                </place>
+            </marking>
+        </finalmarkings>
+    </net>
+</pnml>

@@ -1,0 +1,41 @@
+.canvasContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.reactFlow {
+  width: 100%;
+  height: 100%;
+  background-color: #fafafa;
+}
+
+/* Custom styles for React Flow controls */
+.reactFlow .react-flow__controls {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reactFlow .react-flow__controls button {
+  border: none;
+  background: transparent;
+  color: #333;
+  font-size: 16px;
+  padding: 8px;
+  transition: all 0.2s ease;
+}
+
+.reactFlow .react-flow__controls button:hover {
+  background: #f0f0f0;
+  color: #007bff;
+}
+
+/* Custom styles for MiniMap */
+.reactFlow .react-flow__minimap {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+} 

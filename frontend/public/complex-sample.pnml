@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net id="complex-net" type="http://www.pnml.org/version-2009/grammar/ptnet">
+    <name>
+      <text>Complex Business Process</text>
+    </name>
+    
+    <!-- Places -->
+    <place id="start">
+      <name>
+        <text>Process Start</text>
+      </name>
+      <initialMarking>
+        <text>1</text>
+      </initialMarking>
+    </place>
+    
+    <place id="request_received">
+      <name>
+        <text>Request Received</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="validation_needed">
+      <name>
+        <text>Validation Needed</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="approval_needed">
+      <name>
+        <text>Approval Needed</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="validated">
+      <name>
+        <text>Validated</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="approved">
+      <name>
+        <text>Approved</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="ready_for_processing">
+      <name>
+        <text>Ready for Processing</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="processing">
+      <name>
+        <text>Processing</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="completed">
+      <name>
+        <text>Completed</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <place id="rejected">
+      <name>
+        <text>Rejected</text>
+      </name>
+      <initialMarking>
+        <text>0</text>
+      </initialMarking>
+    </place>
+    
+    <!-- Transitions -->
+    <transition id="receive_request">
+      <name>
+        <text>Receive Request</text>
+      </name>
+    </transition>
+    
+    <transition id="split_for_validation">
+      <name>
+        <text>Split for Validation</text>
+      </name>
+    </transition>
+    
+    <transition id="validate">
+      <name>
+        <text>Validate</text>
+      </name>
+    </transition>
+    
+    <transition id="approve">
+      <name>
+        <text>Approve</text>
+      </name>
+    </transition>
+    
+    <transition id="reject">
+      <name>
+        <text>Reject</text>
+      </name>
+    </transition>
+    
+    <transition id="join_after_validation">
+      <name>
+        <text>Join after Validation</text>
+      </name>
+    </transition>
+    
+    <transition id="start_processing">
+      <name>
+        <text>Start Processing</text>
+      </name>
+    </transition>
+    
+    <transition id="complete_processing">
+      <name>
+        <text>Complete Processing</text>
+      </name>
+    </transition>
+    
+    <!-- Arcs -->
+    <!-- Initial flow -->
+    <arc id="a1" source="start" target="receive_request">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a2" source="receive_request" target="request_received">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <!-- Split for parallel validation and approval -->
+    <arc id="a3" source="request_received" target="split_for_validation">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a4" source="split_for_validation" target="validation_needed">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a5" source="split_for_validation" target="approval_needed">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <!-- Validation path -->
+    <arc id="a6" source="validation_needed" target="validate">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a7" source="validate" target="validated">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <!-- Approval path (with rejection possibility) -->
+    <arc id="a8" source="approval_needed" target="approve">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a9" source="approval_needed" target="reject">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a10" source="approve" target="approved">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a11" source="reject" target="rejected">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <!-- Join after validation and approval -->
+    <arc id="a12" source="validated" target="join_after_validation">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a13" source="approved" target="join_after_validation">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a14" source="join_after_validation" target="ready_for_processing">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <!-- Processing flow -->
+    <arc id="a15" source="ready_for_processing" target="start_processing">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a16" source="start_processing" target="processing">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a17" source="processing" target="complete_processing">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+    
+    <arc id="a18" source="complete_processing" target="completed">
+      <inscription>
+        <text>1</text>
+      </inscription>
+    </arc>
+  </net>
+</pnml> 

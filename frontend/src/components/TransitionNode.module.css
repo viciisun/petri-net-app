@@ -1,0 +1,100 @@
+.transitionNode {
+  position: relative;
+  width: 100px;
+  height: 60px; /* Increased to accommodate name below */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.transitionRect {
+  width: 100px;
+  height: 40px;
+  border: 2px solid #333;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.transitionRect:hover {
+  border-color: #28a745;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: #f8f9fa;
+}
+
+.transitionId {
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.transitionName {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  color: #666;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 4px;
+  padding: 2px 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.handle {
+  width: 8px;
+  height: 8px;
+  background: #007bff;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.handle:hover {
+  background: #0056b3;
+}
+
+.sourceHandle {
+  width: 8px;
+  height: 8px;
+  background: #28a745;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.sourceHandle:hover {
+  background: #1e7e34;
+}
+
+/* Invisible transition styles */
+.invisibleTransition .transitionRect {
+  background: #333;
+  border-color: #333;
+  color: white;
+}
+
+.invisibleTransition .transitionRect:hover {
+  background: #555;
+  border-color: #555;
+}
+
+.invisibleTransition .transitionId {
+  color: white;
+}
+
+.invisibleTransition .transitionName {
+  color: white;
+  background: rgba(51, 51, 51, 0.9);
+  border-color: #333;
+} 
