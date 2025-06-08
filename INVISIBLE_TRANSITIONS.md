@@ -1,58 +1,58 @@
-# Invisible Transitions 功能实现
+# Invisible Transitions Feature Implementation
 
-## 概述
+## Overview
 
-Invisible transitions 是 Petri 网中的特殊 transition 类型，通常用于建模内部逻辑或控制流，不代表实际的业务活动。在 PNML 文件中，这些 transitions 通常标记为`activity="$invisible$"`。
+Invisible transitions are special transition types in Petri nets, typically used for modeling internal logic or control flow, not representing actual business activities. In PNML files, these transitions are usually marked as `activity="$invisible$"`.
 
-## 实现的功能
+## Implemented Features
 
-### 1. 自动检测 Invisible Transitions
+### 1. Automatic Detection of Invisible Transitions
 
-- **检测逻辑**：`transition.label is None`
-- **数据来源**：PM4Py 解析 PNML 时，invisible transitions 的`label`会被设为`None`
-- **名称获取**：从`transition.properties['trans_name_tag']`获取显示名称
+- **Detection Logic**: `transition.label is None`
+- **Data Source**: When PM4Py parses PNML, invisible transitions have their `label` set to `None`
+- **Name Retrieval**: Display name obtained from `transition.properties['trans_name_tag']`
 
-### 2. 数据流处理
+### 2. Data Flow Processing
 
-#### 后端处理
+#### Backend Processing
 
-1. **数据模型** (`backend/app/models/petri_net.py`)
+1. **Data Model** (`backend/app/models/petri_net.py`)
 
-   - 添加`isInvisible: Optional[bool] = False`字段
+   - Added `isInvisible: Optional[bool] = False` field
 
-2. **PM4Py 服务** (`backend/app/services/pm4py_service.py`)
-   - 检测 invisible transitions：`is_invisible = transition.label is None`
-   - 正确获取名称：优先级为 `label` → `properties['trans_name_tag']` → `transition_id`
-   - 在 NodeData 中设置`isInvisible`标记
+2. **PM4Py Service** (`backend/app/services/pm4py_service.py`)
+   - Detect invisible transitions: `is_invisible = transition.label is None`
+   - Correctly obtain names: priority order `label` → `properties['trans_name_tag']` → `transition_id`
+   - Set `isInvisible` flag in NodeData
 
-#### 前端处理
+#### Frontend Processing
 
-3. **Layout 服务** (`frontend/src/services/layoutService.js`)
+3. **Layout Service** (`frontend/src/services/layoutService.js`)
 
-   - 传递`isInvisible`信息到 React 组件
+   - Pass `isInvisible` information to React components
 
-4. **TransitionNode 组件** (`frontend/src/components/TransitionNode.jsx`)
-   - 接收`isInvisible`属性
-   - 应用特殊 CSS 类`invisibleTransition`
+4. **TransitionNode Component** (`frontend/src/components/TransitionNode.jsx`)
+   - Receive `isInvisible` property
+   - Apply special CSS class `invisibleTransition`
 
-### 3. 视觉效果
+### 3. Visual Effects
 
 #### Normal Transitions
 
-- 白色背景
-- 黑色边框
-- 黑色文字
+- White background
+- Black border
+- Black text
 
 #### Invisible Transitions
 
-- **黑色背景** (#333)
-- **黑色边框** (#333)
-- **白色文字**
-- Hover 时：深灰色背景 (#555)
+- **Black background** (#333)
+- **Black border** (#333)
+- **White text**
+- On hover: Dark gray background (#555)
 
-## 测试验证
+## Testing Verification
 
-### 测试用例
+### Test Cases
 
 ```xml
 <!-- Normal Transition -->
@@ -67,14 +67,14 @@ Invisible transitions 是 Petri 网中的特殊 transition 类型，通常用于
 </transition>
 ```
 
-### 预期结果
+### Expected Results
 
-- **n5**: 白色背景，显示"Attended_lecture"
-- **n7**: 黑色背景，白色文字，显示"tau from tree1"
+- **n5**: White background, displays "Attended_lecture"
+- **n7**: Black background, white text, displays "tau from tree1"
 
-## 技术细节
+## Technical Details
 
-### PM4Py 对象属性
+### PM4Py Object Properties
 
 ```python
 # Normal transition
@@ -84,11 +84,11 @@ transition.properties = {'trans_name_tag': 'Attended_lecture'}
 
 # Invisible transition
 transition.name = "n7"
-transition.label = None  # 关键标识
+transition.label = None  # Key identifier
 transition.properties = {'trans_name_tag': 'tau from tree1'}
 ```
 
-### CSS 样式实现
+### CSS Style Implementation
 
 ```css
 .invisibleTransition .transitionRect {
@@ -108,22 +108,22 @@ transition.properties = {'trans_name_tag': 'tau from tree1'}
 }
 ```
 
-## 统计信息
+## Statistics
 
-应用程序会自动统计：
+The application automatically counts:
 
-- `visible_transitions`: 普通 transitions 数量
-- `invisible_transitions`: invisible transitions 数量
+- `visible_transitions`: Number of normal transitions
+- `invisible_transitions`: Number of invisible transitions
 
-这些信息在 Toolbar 组件中显示，帮助用户了解 Petri 网的结构。
+This information is displayed in the Toolbar component to help users understand the Petri net structure.
 
-## 使用场景
+## Use Cases
 
-Invisible transitions 常用于：
+Invisible transitions are commonly used for:
 
-1. **控制流建模**：表示内部逻辑转换
-2. **同步点**：协调多个并行分支
-3. **抽象化**：隐藏实现细节，专注于主要业务流程
-4. **模型简化**：在不同抽象层次间转换
+1. **Control Flow Modeling**: Representing internal logic transitions
+2. **Synchronization Points**: Coordinating multiple parallel branches
+3. **Abstraction**: Hiding implementation details, focusing on main business processes
+4. **Model Simplification**: Converting between different abstraction levels
 
-通过特殊的视觉表示，用户可以清楚地区分业务活动和内部控制逻辑。
+Through special visual representation, users can clearly distinguish between business activities and internal control logic.

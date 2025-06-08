@@ -16,12 +16,15 @@ class LayoutService {
    */
   static getAttachPointPositions(node) {
     const { position, data } = node;
-    const attachPoints = data.attachPoints || 4;
+    const attachPoints = data?.attachPoints || 4;
     const maxPoints = Math.min(Math.max(attachPoints, 4), 12);
     const points = [];
 
-    if (data.type === NodeType.PLACE) {
-      // Circle positions
+    // Use data.type for node type determination
+    const nodeType = data?.type;
+
+    if (nodeType === NodeType.PLACE) {
+      // Circle positions - 4 cardinal directions first, then fill in between
       const centerX = position.x + 40; // 80px width / 2
       const centerY = position.y + 40; // 80px height / 2
       const radius = 40;
@@ -39,12 +42,12 @@ class LayoutService {
           used: false 
         });
       }
-    } else if (data.type === NodeType.TRANSITION) {
-      // Rectangle positions
+    } else if (nodeType === NodeType.TRANSITION) {
+      // Rectangle positions - prioritize cardinal directions
       const centerX = position.x + 50; // 100px width / 2
-      const centerY = position.y + 20; // 40px height / 2 (in 60px container)
+      const centerY = position.y + 30; // 60px height / 2
       const halfWidth = 50;
-      const halfHeight = 20;
+      const halfHeight = 30;
 
       if (maxPoints === 4) {
         points.push(
@@ -54,35 +57,51 @@ class LayoutService {
           { id: 'point-3', x: centerX - halfWidth, y: centerY, angle: 180, used: false } // left
         );
       } else {
-        // More complex distribution for other point counts
-        // Implementation similar to the component logic
-        for (let i = 0; i < maxPoints; i++) {
-          const ratio = i / maxPoints;
-          const perimeter = 2 * (halfWidth * 2 + halfHeight * 2);
-          const distance = ratio * perimeter;
+        // Start with cardinal directions, then add more points
+        const cardinalPoints = [
+          { id: 'point-0', x: centerX, y: centerY - halfHeight, angle: 270, used: false }, // top
+          { id: 'point-1', x: centerX + halfWidth, y: centerY, angle: 0, used: false }, // right
+          { id: 'point-2', x: centerX, y: centerY + halfHeight, angle: 90, used: false }, // bottom
+          { id: 'point-3', x: centerX - halfWidth, y: centerY, angle: 180, used: false } // left
+        ];
+        
+        points.push(...cardinalPoints);
+        
+        // Add additional points if needed
+        for (let i = 4; i < maxPoints; i++) {
+          const angle = (i - 4) * 360 / (maxPoints - 4) + 45; // Start at 45 degrees offset
+          const radian = (angle * Math.PI) / 180;
           
-          let x, y, angle;
-          if (distance <= halfWidth * 2) {
-            x = centerX - halfWidth + distance;
-            y = centerY - halfHeight;
-            angle = 270;
-          } else if (distance <= halfWidth * 2 + halfHeight * 2) {
+          // Place on rectangle perimeter
+          let x, y;
+          if (angle >= 315 || angle < 45) { // right side
             x = centerX + halfWidth;
-            y = centerY - halfHeight + (distance - halfWidth * 2);
-            angle = 0;
-          } else if (distance <= halfWidth * 4 + halfHeight * 2) {
-            x = centerX + halfWidth - (distance - halfWidth * 2 - halfHeight * 2);
+            y = centerY + (halfHeight * Math.tan(radian));
+          } else if (angle >= 45 && angle < 135) { // bottom side
+            x = centerX + (halfWidth / Math.tan(radian));
             y = centerY + halfHeight;
-            angle = 90;
-          } else {
+          } else if (angle >= 135 && angle < 225) { // left side
             x = centerX - halfWidth;
-            y = centerY + halfHeight - (distance - halfWidth * 4 - halfHeight * 2);
-            angle = 180;
+            y = centerY - (halfHeight * Math.tan(radian));
+          } else { // top side
+            x = centerX - (halfWidth / Math.tan(radian));
+            y = centerY - halfHeight;
           }
           
           points.push({ id: `point-${i}`, x, y, angle, used: false });
         }
       }
+    } else {
+      // Fallback: create 4 cardinal direction points
+      const centerX = position.x + 40;
+      const centerY = position.y + 40;
+      
+      points.push(
+        { id: 'point-0', x: centerX, y: centerY - 40, angle: 270, used: false }, // top
+        { id: 'point-1', x: centerX + 40, y: centerY, angle: 0, used: false }, // right
+        { id: 'point-2', x: centerX, y: centerY + 40, angle: 90, used: false }, // bottom
+        { id: 'point-3', x: centerX - 40, y: centerY, angle: 180, used: false } // left
+      );
     }
 
     return points;
@@ -98,18 +117,24 @@ class LayoutService {
     // Create a map of node positions and attach points
     const nodeMap = new Map();
     nodes.forEach(node => {
+      const attachPoints = this.getAttachPointPositions(node);
       nodeMap.set(node.id, {
         ...node,
-        attachPoints: this.getAttachPointPositions(node)
+        attachPoints: attachPoints,
+        maxAttachPoints: attachPoints.length,  // Store the actual number of attach points
+        currentAttachPointCount: attachPoints.length
       });
     });
 
-    return edges.map((edge, index) => {
+    // Process edges sequentially to maintain used state across all edges
+    const processedEdges = [];
+    
+    edges.forEach((edge, index) => {
       const sourceNode = nodeMap.get(edge.source);
       const targetNode = nodeMap.get(edge.target);
 
       if (!sourceNode || !targetNode) {
-        return {
+        processedEdges.push({
           ...edge,
           sourceHandle: 'source-point-0',
           targetHandle: 'target-point-0',
@@ -117,61 +142,263 @@ class LayoutService {
           reconnectable: true,
           markerEnd: {
             type: MarkerType.Arrow,
-            width: 15,
-            height: 15,
+            width: '15',
+            height: '15',
             color: '#333'
           },
           style: {
             stroke: '#333',
-            strokeWidth: 2
-          }
-        };
-      }
-
-      // Find the closest unused attach points
-      let bestDistance = Infinity;
-      let bestSourceHandle = 'source-point-0';
-      let bestTargetHandle = 'target-point-0';
-
-      sourceNode.attachPoints.forEach(sourcePoint => {
-        if (sourcePoint.used) return;
-        
-        targetNode.attachPoints.forEach(targetPoint => {
-          if (targetPoint.used) return;
-          
-          const distance = this.calculateDistance(sourcePoint, targetPoint);
-          if (distance < bestDistance) {
-            bestDistance = distance;
-            bestSourceHandle = `source-${sourcePoint.id}`;
-            bestTargetHandle = `target-${targetPoint.id}`;
+            strokeWidth: '2'
           }
         });
-      });
+        return;
+      }
+
+      // Find the best available attach points
+      let bestResult = this.findBestAttachPoints(sourceNode, targetNode, edge);
+      
+      // If no unused points found and we haven't reached the limit, try to expand
+      if (!bestResult.found && sourceNode.currentAttachPointCount < 12) {
+        const newCount = Math.min(sourceNode.currentAttachPointCount + 4, 12);
+        sourceNode.attachPoints = this.expandAttachPoints(sourceNode, newCount);
+        sourceNode.currentAttachPointCount = newCount;
+        sourceNode.maxAttachPoints = newCount;
+        bestResult = this.findBestAttachPoints(sourceNode, targetNode, edge);
+      }
+      
+      if (!bestResult.found && targetNode.currentAttachPointCount < 12) {
+        const newCount = Math.min(targetNode.currentAttachPointCount + 4, 12);
+        targetNode.attachPoints = this.expandAttachPoints(targetNode, newCount);
+        targetNode.currentAttachPointCount = newCount;
+        targetNode.maxAttachPoints = newCount;
+        bestResult = this.findBestAttachPoints(sourceNode, targetNode, edge);
+      }
+      
+      // If still no unused points, allow reusing points (find least used)
+      if (!bestResult.found) {
+        bestResult = this.findLeastUsedAttachPoints(sourceNode, targetNode, edge);
+      }
+
+      // Validate that the selected handles exist within the node's attach point range
+      const sourcePointIndex = parseInt(bestResult.sourceHandle.split('-').pop());
+      const targetPointIndex = parseInt(bestResult.targetHandle.split('-').pop());
+      
+      if (sourcePointIndex >= sourceNode.maxAttachPoints) {
+        console.warn(`Source handle ${bestResult.sourceHandle} exceeds available points (${sourceNode.maxAttachPoints}) for node ${edge.source}`);
+        bestResult.sourceHandle = `source-point-${sourceNode.maxAttachPoints - 1}`;
+        bestResult.sourcePoint = sourceNode.attachPoints[sourceNode.maxAttachPoints - 1];
+      }
+      
+      if (targetPointIndex >= targetNode.maxAttachPoints) {
+        console.warn(`Target handle ${bestResult.targetHandle} exceeds available points (${targetNode.maxAttachPoints}) for node ${edge.target}`);
+        bestResult.targetHandle = `target-point-${targetNode.maxAttachPoints - 1}`;
+        bestResult.targetPoint = targetNode.attachPoints[targetNode.maxAttachPoints - 1];
+      }
 
       // Mark the selected points as used
-      const sourcePoint = sourceNode.attachPoints.find(p => `source-${p.id}` === bestSourceHandle);
-      const targetPoint = targetNode.attachPoints.find(p => `target-${p.id}` === bestTargetHandle);
-      if (sourcePoint) sourcePoint.used = true;
-      if (targetPoint) targetPoint.used = true;
+      if (bestResult.sourcePoint) {
+        bestResult.sourcePoint.used = true;
+        bestResult.sourcePoint.usageCount = (bestResult.sourcePoint.usageCount || 0) + 1;
+      }
+      if (bestResult.targetPoint) {
+        bestResult.targetPoint.used = true;
+        bestResult.targetPoint.usageCount = (bestResult.targetPoint.usageCount || 0) + 1;
+      }
 
-      return {
+      processedEdges.push({
         ...edge,
-        sourceHandle: bestSourceHandle,
-        targetHandle: bestTargetHandle,
+        sourceHandle: bestResult.sourceHandle,
+        targetHandle: bestResult.targetHandle,
         animated: true,
         reconnectable: true,
         markerEnd: {
           type: MarkerType.Arrow,
-          width: 15,
-          height: 15,
+          width: '15',
+          height: '15',
           color: '#333'
         },
         style: {
           stroke: '#333',
-          strokeWidth: 2
+          strokeWidth: '2'
         }
-      };
+      });
     });
+
+    return processedEdges;
+  }
+
+  /**
+   * Find the best unused attach points between source and target nodes
+   */
+  static findBestAttachPoints(sourceNode, targetNode, edge) {
+    let bestDistance = Infinity;
+    let bestSourceHandle = 'source-point-0';
+    let bestTargetHandle = 'target-point-0';
+    let bestSourcePoint = null;
+    let bestTargetPoint = null;
+    let found = false;
+
+    sourceNode.attachPoints.forEach(sourcePoint => {
+      if (sourcePoint.used) {
+        return;
+      }
+      
+      targetNode.attachPoints.forEach(targetPoint => {
+        if (targetPoint.used) {
+          return;
+        }
+        
+        const distance = this.calculateDistance(sourcePoint, targetPoint);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestSourceHandle = `source-${sourcePoint.id}`;
+          bestTargetHandle = `target-${targetPoint.id}`;
+          bestSourcePoint = sourcePoint;
+          bestTargetPoint = targetPoint;
+          found = true;
+        }
+      });
+    });
+
+    return {
+      found,
+      sourceHandle: bestSourceHandle,
+      targetHandle: bestTargetHandle,
+      sourcePoint: bestSourcePoint,
+      targetPoint: bestTargetPoint,
+      distance: bestDistance
+    };
+  }
+
+  /**
+   * Find the least used attach points when all points are used
+   */
+  static findLeastUsedAttachPoints(sourceNode, targetNode, edge) {
+    let bestDistance = Infinity;
+    let bestSourceHandle = 'source-point-0';
+    let bestTargetHandle = 'target-point-0';
+    let bestSourcePoint = null;
+    let bestTargetPoint = null;
+    let minUsageSum = Infinity;
+
+    sourceNode.attachPoints.forEach(sourcePoint => {
+      targetNode.attachPoints.forEach(targetPoint => {
+        const sourceUsage = sourcePoint.usageCount || 0;
+        const targetUsage = targetPoint.usageCount || 0;
+        const usageSum = sourceUsage + targetUsage;
+        const distance = this.calculateDistance(sourcePoint, targetPoint);
+        
+        // Prefer points with lower usage, then shorter distance
+        if (usageSum < minUsageSum || (usageSum === minUsageSum && distance < bestDistance)) {
+          bestDistance = distance;
+          bestSourceHandle = `source-${sourcePoint.id}`;
+          bestTargetHandle = `target-${targetPoint.id}`;
+          bestSourcePoint = sourcePoint;
+          bestTargetPoint = targetPoint;
+          minUsageSum = usageSum;
+        }
+      });
+    });
+
+    return {
+      found: true,
+      sourceHandle: bestSourceHandle,
+      targetHandle: bestTargetHandle,
+      sourcePoint: bestSourcePoint,
+      targetPoint: bestTargetPoint,
+      distance: bestDistance
+    };
+  }
+
+  /**
+   * Expand attach points for a node to the specified count
+   */
+  static expandAttachPoints(node, newCount) {
+    const { position } = node;
+    const nodeType = node.type;
+    const maxPoints = Math.min(newCount, 12);
+    const points = [];
+
+    if (nodeType === NodeType.PLACE) {
+      // Circle positions
+      const centerX = position.x + 40;
+      const centerY = position.y + 40;
+      const radius = 40;
+
+      for (let i = 0; i < maxPoints; i++) {
+        const angle = (i * 360) / maxPoints;
+        const radian = (angle * Math.PI) / 180;
+        const x = centerX + radius * Math.cos(radian);
+        const y = centerY + radius * Math.sin(radian);
+        
+        // Preserve existing usage data if point exists
+        const existingPoint = node.attachPoints.find(p => p.id === `point-${i}`);
+        points.push({ 
+          id: `point-${i}`, 
+          x, 
+          y, 
+          angle,
+          used: existingPoint?.used || false,
+          usageCount: existingPoint?.usageCount || 0
+        });
+      }
+    } else if (nodeType === NodeType.TRANSITION) {
+      // Rectangle positions
+      const centerX = position.x + 50;
+      const centerY = position.y + 30;
+      const halfWidth = 50;
+      const halfHeight = 30;
+
+      // Always start with cardinal directions
+      const cardinalPoints = [
+        { id: 'point-0', x: centerX, y: centerY - halfHeight, angle: 270 }, // top
+        { id: 'point-1', x: centerX + halfWidth, y: centerY, angle: 0 }, // right
+        { id: 'point-2', x: centerX, y: centerY + halfHeight, angle: 90 }, // bottom
+        { id: 'point-3', x: centerX - halfWidth, y: centerY, angle: 180 } // left
+      ];
+      
+      cardinalPoints.forEach(point => {
+        const existingPoint = node.attachPoints.find(p => p.id === point.id);
+        points.push({
+          ...point,
+          used: existingPoint?.used || false,
+          usageCount: existingPoint?.usageCount || 0
+        });
+      });
+      
+      // Add additional points if needed
+      for (let i = 4; i < maxPoints; i++) {
+        const angle = (i - 4) * 360 / (maxPoints - 4) + 45;
+        const radian = (angle * Math.PI) / 180;
+        
+        let x, y;
+        if (angle >= 315 || angle < 45) {
+          x = centerX + halfWidth;
+          y = centerY + (halfHeight * Math.tan(radian));
+        } else if (angle >= 45 && angle < 135) {
+          x = centerX + (halfWidth / Math.tan(radian));
+          y = centerY + halfHeight;
+        } else if (angle >= 135 && angle < 225) {
+          x = centerX - halfWidth;
+          y = centerY - (halfHeight * Math.tan(radian));
+        } else {
+          x = centerX - (halfWidth / Math.tan(radian));
+          y = centerY - halfHeight;
+        }
+        
+        const existingPoint = node.attachPoints.find(p => p.id === `point-${i}`);
+        points.push({ 
+          id: `point-${i}`, 
+          x, 
+          y, 
+          angle, 
+          used: existingPoint?.used || false,
+          usageCount: existingPoint?.usageCount || 0
+        });
+      }
+    }
+
+    return points;
   }
 
   /**
@@ -243,9 +470,55 @@ class LayoutService {
     const edgesWithHandles = this.assignConnectionHandles(edges, layoutedNodes);
 
     return { nodes: layoutedNodes, edges: edgesWithHandles };
-    }
+  }
 
-
+  /**
+   * Analyze node connectivity and determine required attach points
+   * @param {Array} nodes - Array of nodes
+   * @param {Array} edges - Array of edges
+   * @returns {Map} - Map of nodeId to required attach points count
+   */
+  static analyzeNodeConnectivity(nodes, edges) {
+    const nodeConnections = new Map();
+    
+    // Initialize connection count for all nodes
+    nodes.forEach(node => {
+      nodeConnections.set(node.id, { incoming: 0, outgoing: 0, total: 0 });
+    });
+    
+    // Count connections for each node
+    edges.forEach(edge => {
+      const sourceConnections = nodeConnections.get(edge.source);
+      const targetConnections = nodeConnections.get(edge.target);
+      
+      if (sourceConnections) {
+        sourceConnections.outgoing++;
+        sourceConnections.total++;
+      }
+      
+      if (targetConnections) {
+        targetConnections.incoming++;
+        targetConnections.total++;
+      }
+    });
+    
+    // Calculate required attach points for each node
+    const requiredAttachPoints = new Map();
+    nodeConnections.forEach((connections, nodeId) => {
+      // Start with minimum 4 points, then scale up based on connections
+      let required = Math.max(4, connections.total);
+      
+      // Round up to nearest multiple of 4 for better distribution
+      required = Math.ceil(required / 4) * 4;
+      
+      // Cap at 12 points maximum
+      required = Math.min(required, 12);
+      
+      requiredAttachPoints.set(nodeId, required);
+    });
+    
+    return requiredAttachPoints;
+  }
 
   /**
    * Apply layout to nodes and edges from backend API
@@ -255,23 +528,30 @@ class LayoutService {
    * @returns {{nodes: Array, edges: Array}} - Layouted nodes and edges
    */
   static applyLayout(nodes, edges, direction = 'horizontal') {
+    // Analyze node connectivity to determine required attach points
+    const requiredAttachPoints = this.analyzeNodeConnectivity(nodes, edges);
+    
     // Convert backend format to React Flow format with enhanced node data
-    const reactFlowNodes = nodes.map(node => ({
-      ...node,
-      type: node.type || (node.data?.type === 'place' ? NodeType.PLACE : NodeType.TRANSITION),
-      position: node.position || { x: 0, y: 0 },
-      data: {
-        ...node.data,
-        id: node.id,
-        label: node.data?.label || node.id,
-        name: node.data?.name || node.data?.label || node.id,
-        tokens: node.data?.tokens || 0,
-        isInitialMarking: node.data?.isInitialMarking || false,
-        isFinalMarking: node.data?.isFinalMarking || false,
-        isInvisible: node.data?.isInvisible || false,
-        attachPoints: node.data?.attachPoints || 4
-      }
-    }));
+    const reactFlowNodes = nodes.map(node => {
+      const requiredPoints = requiredAttachPoints.get(node.id) || 4;
+      
+      return {
+        ...node,
+        type: node.type || (node.data?.type === 'place' ? NodeType.PLACE : NodeType.TRANSITION),
+        position: node.position || { x: 0, y: 0 },
+        data: {
+          ...node.data,
+          id: node.id,
+          label: node.data?.label || node.id,
+          name: node.data?.name || node.data?.label || node.id,
+          tokens: node.data?.tokens || 0,
+          isInitialMarking: node.data?.isInitialMarking || false,
+          isFinalMarking: node.data?.isFinalMarking || false,
+          isInvisible: node.data?.isInvisible || false,
+          attachPoints: requiredPoints  // Use calculated required points
+        }
+      };
+    });
 
     // Apply Dagre layout with specified direction
     return this.applyDagreLayout(reactFlowNodes, edges, direction);

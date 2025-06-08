@@ -101,6 +101,91 @@ class ApiService {
       throw error;
     }
   }
+
+  async previewEventLog(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`${this.baseURL}/api/preview-event-log`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to preview event log');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Event log preview error:', error);
+      throw error;
+    }
+  }
+
+  async importEventLog(file, config) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('config', JSON.stringify(config));
+
+    try {
+      const response = await fetch(`${this.baseURL}/api/import-event-log`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to import event log');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Event log import error:', error);
+      throw error;
+    }
+  }
+
+  async exportEventLog(petriNetData, config = {}) {
+    try {
+      const requestBody = {
+        ...petriNetData,
+        config: config
+      };
+
+      const response = await fetch(`${this.baseURL}/api/export-event-log`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to export Event Log');
+      }
+
+      // Get the filename from the response headers
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = 'event_log.csv';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename=(.+)/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Get the CSV content as blob
+      const blob = await response.blob();
+      
+      return { blob, filename };
+    } catch (error) {
+      console.error('Event Log export error:', error);
+      throw error;
+    }
+  }
 }
 
 export default new ApiService(); 

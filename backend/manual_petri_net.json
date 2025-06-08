@@ -1,0 +1,637 @@
+{
+  "networkId": "8a75de70-85dd-4c83-a7c6-3e9d9fafcf70",
+  "networkName": "Manual Student Learning Process",
+  "nodes": [
+    {
+      "id": "place_enrolled",
+      "type": "place",
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_enrolled",
+        "label": "enrolled",
+        "name": "enrolled",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_completed",
+      "type": "place",
+      "position": {
+        "x": 300.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_completed",
+        "label": "completed",
+        "name": "completed",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_start",
+      "type": "place",
+      "position": {
+        "x": 500.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_start",
+        "label": "start",
+        "name": "start",
+        "tokens": 1,
+        "isInitialMarking": true,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_assessment",
+      "type": "place",
+      "position": {
+        "x": 700.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_assessment",
+        "label": "assessment",
+        "name": "assessment",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_learning",
+      "type": "place",
+      "position": {
+        "x": 100.0,
+        "y": 250.0
+      },
+      "data": {
+        "id": "place_learning",
+        "label": "learning",
+        "name": "learning",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_end",
+      "type": "place",
+      "position": {
+        "x": 300.0,
+        "y": 250.0
+      },
+      "data": {
+        "id": "place_end",
+        "label": "end",
+        "name": "end",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": true,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Enrolled",
+      "type": "transition",
+      "position": {
+        "x": 600.0,
+        "y": 300.0
+      },
+      "data": {
+        "id": "transition_Enrolled",
+        "label": "Enrolled",
+        "name": "Enrolled",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Attended_lecture",
+      "type": "transition",
+      "position": {
+        "x": 800.0,
+        "y": 300.0
+      },
+      "data": {
+        "id": "transition_Attended_lecture",
+        "label": "Attended_lecture",
+        "name": "Attended_lecture",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Attended_tutorial",
+      "type": "transition",
+      "position": {
+        "x": 200.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_Attended_tutorial",
+        "label": "Attended_tutorial",
+        "name": "Attended_tutorial",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Attended_training",
+      "type": "transition",
+      "position": {
+        "x": 400.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_Attended_training",
+        "label": "Attended_training",
+        "name": "Attended_training",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_choice",
+      "type": "transition",
+      "position": {
+        "x": 600.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_choice",
+        "label": "choice",
+        "name": "choice",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": true,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_complete",
+      "type": "transition",
+      "position": {
+        "x": 800.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_complete",
+        "label": "complete",
+        "name": "complete",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": true,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Presented_Exam",
+      "type": "transition",
+      "position": {
+        "x": 200.0,
+        "y": 600.0
+      },
+      "data": {
+        "id": "transition_Presented_Exam",
+        "label": "Presented_Exam",
+        "name": "Presented_Exam",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Submitted_Assignments",
+      "type": "transition",
+      "position": {
+        "x": 400.0,
+        "y": 600.0
+      },
+      "data": {
+        "id": "transition_Submitted_Assignments",
+        "label": "Submitted_Assignments",
+        "name": "Submitted_Assignments",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Recieved_Results",
+      "type": "transition",
+      "position": {
+        "x": 600.0,
+        "y": 600.0
+      },
+      "data": {
+        "id": "transition_Recieved_Results",
+        "label": "Recieved_Results",
+        "name": "Recieved_Results",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_loop",
+      "type": "transition",
+      "position": {
+        "x": 800.0,
+        "y": 600.0
+      },
+      "data": {
+        "id": "transition_loop",
+        "label": "loop",
+        "name": "loop",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": true,
+        "attachPoints": 4
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "place_learning-transition_Attended_training",
+      "source": "place_learning",
+      "target": "transition_Attended_training",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_completed-transition_loop",
+      "source": "place_completed",
+      "target": "transition_loop",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Attended_lecture-place_learning",
+      "source": "transition_Attended_lecture",
+      "target": "place_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Submitted_Assignments-place_assessment",
+      "source": "transition_Submitted_Assignments",
+      "target": "place_assessment",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_enrolled-transition_choice",
+      "source": "place_enrolled",
+      "target": "transition_choice",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_learning-transition_Presented_Exam",
+      "source": "place_learning",
+      "target": "transition_Presented_Exam",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_completed-transition_complete",
+      "source": "place_completed",
+      "target": "transition_complete",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Attended_tutorial-place_learning",
+      "source": "transition_Attended_tutorial",
+      "target": "place_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Recieved_Results-place_completed",
+      "source": "transition_Recieved_Results",
+      "target": "place_completed",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_learning-transition_Attended_lecture",
+      "source": "place_learning",
+      "target": "transition_Attended_lecture",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_learning-transition_Submitted_Assignments",
+      "source": "place_learning",
+      "target": "transition_Submitted_Assignments",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_start-transition_Enrolled",
+      "source": "place_start",
+      "target": "transition_Enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Enrolled-place_enrolled",
+      "source": "transition_Enrolled",
+      "target": "place_enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Attended_training-place_learning",
+      "source": "transition_Attended_training",
+      "target": "place_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_loop-place_enrolled",
+      "source": "transition_loop",
+      "target": "place_enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_learning-transition_Attended_tutorial",
+      "source": "place_learning",
+      "target": "transition_Attended_tutorial",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_assessment-transition_Recieved_Results",
+      "source": "place_assessment",
+      "target": "transition_Recieved_Results",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_choice-place_learning",
+      "source": "transition_choice",
+      "target": "place_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Presented_Exam-place_assessment",
+      "source": "transition_Presented_Exam",
+      "target": "place_assessment",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_complete-place_end",
+      "source": "transition_complete",
+      "target": "place_end",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    }
+  ],
+  "statistics": {
+    "places": 6,
+    "transitions": 10,
+    "arcs": 20,
+    "initial_places": 1,
+    "final_places": 1
+  },
+  "selectedElement": null,
+  "metadata": {
+    "source": "manual_creation",
+    "description": "Hand-crafted Petri net based on Event Log analysis",
+    "activities": [
+      "Enrolled",
+      "Attended_lecture",
+      "Attended_tutorial",
+      "Presented_Exam",
+      "Submitted_Assignments",
+      "Recieved_Results",
+      "Attended_training"
+    ]
+  }
+}

@@ -2,12 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import usePetriNetStore from '../store/petriNetStore';
 import LayoutService from '../services/layoutService';
 import apiService from '../services/apiService';
+import EventLogImportDialog from './EventLogImportDialog';
 import styles from './Header.module.css';
 
 const Header = () => {
   const fileInputRef = useRef(null);
   const [showImportMenu, setShowImportMenu] = useState(false);
   const [showSaveMenu, setShowSaveMenu] = useState(false);
+  const [showEventLogDialog, setShowEventLogDialog] = useState(false);
   
   const {
     nodes,
@@ -66,8 +68,7 @@ const Header = () => {
   };
 
   const handleEventLogImportClick = () => {
-    // TODO: Implement event log import in future
-    alert('Event Log import will be supported in future versions');
+    setShowEventLogDialog(true);
     setShowImportMenu(false);
   };
 
@@ -134,6 +135,53 @@ const Header = () => {
     } catch (error) {
       console.error('PNML export failed:', error);
       setError(`PNML export failed: ${error.message}`);
+    } finally {
+      setLoading(false);
+      setShowSaveMenu(false);
+    }
+  };
+
+  const handleEventLogExport = async () => {
+    try {
+      if (nodes.length === 0) {
+        alert('No Petri net to export');
+        setShowSaveMenu(false);
+        return;
+      }
+
+      setLoading(true);
+      
+      // Prepare data for export
+      const petriNetData = {
+        nodes: nodes,
+        edges: edges,
+        statistics: statistics,
+        networkId: networkId,
+        networkName: networkName
+      };
+
+      // Default configuration for Event Log export
+      const config = {
+        no_traces: 100,
+        max_trace_length: 50
+      };
+
+      // Call API to export Event Log
+      const { blob, filename } = await apiService.exportEventLog(petriNetData, config);
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('Event Log export failed:', error);
+      setError(`Event Log export failed: ${error.message}`);
     } finally {
       setLoading(false);
       setShowSaveMenu(false);
@@ -237,11 +285,11 @@ const Header = () => {
         )}
 
         <div className={styles.dropdownContainer}>
-          <button
-            onClick={handleImportClick}
-            disabled={isLoading}
+        <button
+          onClick={handleImportClick}
+          disabled={isLoading}
             className={`${styles.button} ${styles.primaryButton} ${showImportMenu ? styles.active : ''}`}
-          >
+        >
             Import
             <span className={styles.dropdownArrow}>▼</span>
           </button>
@@ -253,7 +301,7 @@ const Header = () => {
                 className={styles.dropdownItem}
                 disabled={isLoading}
               >
-                <span className={styles.itemIcon}>📄</span>
+                <span className={styles.itemIcon}></span>
                 PNML Model
               </button>
               <button
@@ -261,17 +309,16 @@ const Header = () => {
                 className={styles.dropdownItem}
                 disabled={isLoading}
               >
-                <span className={styles.itemIcon}>📋</span>
+                <span className={styles.itemIcon}></span>
                 APNML Model
               </button>
               <button
                 onClick={handleEventLogImportClick}
                 className={styles.dropdownItem}
-                disabled
+                disabled={isLoading}
               >
-                <span className={styles.itemIcon}>📊</span>
+                <span className={styles.itemIcon}></span>
                 Event Log File
-                <span className={styles.comingSoon}>(Coming Soon)</span>
               </button>
             </div>
           )}
@@ -295,14 +342,14 @@ const Header = () => {
                   onClick={() => handleImageExport('png')}
                   className={styles.dropdownItem}
                 >
-                  <span className={styles.itemIcon}>🖼️</span>
+                  <span className={styles.itemIcon}></span>
                   PNG Image
                 </button>
                 <button
                   onClick={() => handleImageExport('jpeg')}
                   className={styles.dropdownItem}
                 >
-                  <span className={styles.itemIcon}>🖼️</span>
+                  <span className={styles.itemIcon}></span>
                   JPEG Image
                 </button>
               </div>
@@ -312,8 +359,16 @@ const Header = () => {
                 className={styles.dropdownItem}
                 disabled={isLoading || nodes.length === 0}
               >
-                <span className={styles.itemIcon}>📄</span>
+                <span className={styles.itemIcon}></span>
                 PNML Model
+        </button>
+              <button
+                onClick={handleEventLogExport}
+                className={styles.dropdownItem}
+                disabled={isLoading || nodes.length === 0}
+              >
+                <span className={styles.itemIcon}></span>
+                Event Log
               </button>
             </div>
           )}
@@ -327,6 +382,11 @@ const Header = () => {
           style={{ display: 'none' }}
         />
       </div>
+      
+      <EventLogImportDialog 
+        isOpen={showEventLogDialog}
+        onClose={() => setShowEventLogDialog(false)}
+      />
     </header>
   );
 };

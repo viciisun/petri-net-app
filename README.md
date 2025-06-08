@@ -10,12 +10,12 @@ A modern web application for visualizing Petri nets with a React frontend and Py
 
 ## Features
 
-- 📁 PNML file upload and parsing with PM4Py
-- 🎨 Interactive Petri net visualization
-- 📊 Comprehensive network statistics
-- 🔄 Multiple layout algorithms (Dagre, Elkjs)
-- 📱 Responsive design
-- 🚀 Fast API with automatic documentation
+- PNML file upload and parsing with PM4Py
+- Interactive Petri net visualization
+- Comprehensive network statistics
+- Multiple layout algorithms (Dagre, Elkjs)
+- Responsive design
+- Fast API with automatic documentation
 
 ## Quick Start
 

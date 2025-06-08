@@ -51,12 +51,12 @@ petri-net-app/
 
 ## Removed Components
 
-- ❌ Virtual environment setup (using miniforge base)
-- ❌ PM4JS client-side parsing
-- ❌ Custom PNML parser
-- ❌ FileImportService
-- ❌ Startup scripts
-- ❌ Old dist/ directory
+- Virtual environment setup (using miniforge base)
+- PM4JS client-side parsing
+- Custom PNML parser
+- FileImportService
+- Startup scripts
+- Old dist/ directory
 
 ## Running the Application
 

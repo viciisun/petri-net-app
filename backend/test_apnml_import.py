@@ -8,40 +8,44 @@ from pm4py.objects.petri_net.importer import importer as pnml_importer
 import os
 
 def test_apnml_import():
-    """Test importing APNML file using PM4Py"""
-    apnml_file = '../frontend/public/student_learning_process (1).apnml'
+    """Test APNML file import functionality"""
     
+    # APNML file path
+    apnml_file = "frontend/public/complex-sample.apnml"
+    
+    # Check if file exists
     if not os.path.exists(apnml_file):
-        print(f"❌ APNML文件不存在: {apnml_file}")
-        return False
+        print(f"APNML file does not exist: {apnml_file}")
+        return
     
     try:
-        # 尝试导入APNML文件
-        net, initial_marking, final_marking = pnml_importer.apply(apnml_file)
+        # Try to import APNML file
+        net, initial_marking, final_marking = pm4py.read_pnml(apnml_file)
         
-        print('✅ APNML文件导入成功!')
-        print(f'网络名称: {net.name}')
-        print(f'Places数量: {len(net.places)}')
-        print(f'Transitions数量: {len(net.transitions)}')
-        print(f'Arcs数量: {len(net.arcs)}')
+        print('APNML file imported successfully!')
+        print(f'Network name: {net.name}')
+        print(f'Number of places: {len(net.places)}')
+        print(f'Number of transitions: {len(net.transitions)}')
+        print(f'Number of arcs: {len(net.arcs)}')
+        
         print(f'Initial marking: {initial_marking}')
         print(f'Final marking: {final_marking}')
         
-        # 打印一些详细信息
-        print('\n=== Places ===')
+        # Print some detailed information
+        print("\nPlaces:")
         for place in net.places:
-            print(f'  {place.name} (id: {place})')
-            
-        print('\n=== Transitions ===')
-        for transition in net.transitions:
-            activity = getattr(transition, 'label', 'None')
-            print(f'  {transition.name} (activity: {activity})')
-            
-        return True
+            print(f"  - {place.name}")
         
+        print("\nTransitions:")
+        for transition in net.transitions:
+            print(f"  - {transition.name} (label: {transition.label})")
+        
+        print("\nArcs:")
+        for arc in net.arcs:
+            print(f"  - {arc.source.name} -> {arc.target.name}")
+            
     except Exception as e:
-        print(f'❌ 导入失败: {e}')
-        return False
+        print(f'Import failed: {e}')
 
 if __name__ == "__main__":
     test_apnml_import() 

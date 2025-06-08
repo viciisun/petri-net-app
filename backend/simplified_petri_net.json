@@ -1,0 +1,539 @@
+{
+  "networkId": "ebd46512-4433-4b3b-baf8-ad5d6a63dedc",
+  "networkName": "Simplified Learning Process",
+  "nodes": [
+    {
+      "id": "place_active_learning",
+      "type": "place",
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_active_learning",
+        "label": "active_learning",
+        "name": "active_learning",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_start",
+      "type": "place",
+      "position": {
+        "x": 300.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_start",
+        "label": "start",
+        "name": "start",
+        "tokens": 1,
+        "isInitialMarking": true,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_end",
+      "type": "place",
+      "position": {
+        "x": 500.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_end",
+        "label": "end",
+        "name": "end",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": true,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_results_received",
+      "type": "place",
+      "position": {
+        "x": 700.0,
+        "y": 100.0
+      },
+      "data": {
+        "id": "place_results_received",
+        "label": "results_received",
+        "name": "results_received",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "place_enrolled",
+      "type": "place",
+      "position": {
+        "x": 100.0,
+        "y": 250.0
+      },
+      "data": {
+        "id": "place_enrolled",
+        "label": "enrolled",
+        "name": "enrolled",
+        "tokens": 0,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Enrolled",
+      "type": "transition",
+      "position": {
+        "x": 400.0,
+        "y": 300.0
+      },
+      "data": {
+        "id": "transition_Enrolled",
+        "label": "Enrolled",
+        "name": "Enrolled",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Attended_lecture",
+      "type": "transition",
+      "position": {
+        "x": 600.0,
+        "y": 300.0
+      },
+      "data": {
+        "id": "transition_Attended_lecture",
+        "label": "Attended_lecture",
+        "name": "Attended_lecture",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Presented_Exam",
+      "type": "transition",
+      "position": {
+        "x": 800.0,
+        "y": 300.0
+      },
+      "data": {
+        "id": "transition_Presented_Exam",
+        "label": "Presented_Exam",
+        "name": "Presented_Exam",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Attended_tutorial",
+      "type": "transition",
+      "position": {
+        "x": 200.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_Attended_tutorial",
+        "label": "Attended_tutorial",
+        "name": "Attended_tutorial",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_loop_back",
+      "type": "transition",
+      "position": {
+        "x": 400.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_loop_back",
+        "label": "loop_back",
+        "name": "loop_back",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": true,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_finish",
+      "type": "transition",
+      "position": {
+        "x": 600.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_finish",
+        "label": "finish",
+        "name": "finish",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": true,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Submitted_Assignments",
+      "type": "transition",
+      "position": {
+        "x": 800.0,
+        "y": 450.0
+      },
+      "data": {
+        "id": "transition_Submitted_Assignments",
+        "label": "Submitted_Assignments",
+        "name": "Submitted_Assignments",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    },
+    {
+      "id": "transition_Recieved_Results",
+      "type": "transition",
+      "position": {
+        "x": 200.0,
+        "y": 600.0
+      },
+      "data": {
+        "id": "transition_Recieved_Results",
+        "label": "Recieved_Results",
+        "name": "Recieved_Results",
+        "tokens": null,
+        "isInitialMarking": false,
+        "isFinalMarking": false,
+        "isInvisible": false,
+        "attachPoints": 4
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "place_enrolled-transition_Attended_lecture",
+      "source": "place_enrolled",
+      "target": "transition_Attended_lecture",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Attended_lecture-place_active_learning",
+      "source": "transition_Attended_lecture",
+      "target": "place_active_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Attended_tutorial-place_active_learning",
+      "source": "transition_Attended_tutorial",
+      "target": "place_active_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_active_learning-transition_Presented_Exam",
+      "source": "place_active_learning",
+      "target": "transition_Presented_Exam",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Submitted_Assignments-place_active_learning",
+      "source": "transition_Submitted_Assignments",
+      "target": "place_active_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_active_learning-transition_Recieved_Results",
+      "source": "place_active_learning",
+      "target": "transition_Recieved_Results",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Recieved_Results-place_results_received",
+      "source": "transition_Recieved_Results",
+      "target": "place_results_received",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_results_received-transition_loop_back",
+      "source": "place_results_received",
+      "target": "transition_loop_back",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_results_received-transition_finish",
+      "source": "place_results_received",
+      "target": "transition_finish",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_start-transition_Enrolled",
+      "source": "place_start",
+      "target": "transition_Enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_enrolled-transition_Attended_tutorial",
+      "source": "place_enrolled",
+      "target": "transition_Attended_tutorial",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Enrolled-place_enrolled",
+      "source": "transition_Enrolled",
+      "target": "place_enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_active_learning-transition_Attended_lecture",
+      "source": "place_active_learning",
+      "target": "transition_Attended_lecture",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_active_learning-transition_Attended_tutorial",
+      "source": "place_active_learning",
+      "target": "transition_Attended_tutorial",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_Presented_Exam-place_active_learning",
+      "source": "transition_Presented_Exam",
+      "target": "place_active_learning",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "place_active_learning-transition_Submitted_Assignments",
+      "source": "place_active_learning",
+      "target": "transition_Submitted_Assignments",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_loop_back-place_enrolled",
+      "source": "transition_loop_back",
+      "target": "place_enrolled",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    },
+    {
+      "id": "transition_finish-place_end",
+      "source": "transition_finish",
+      "target": "place_end",
+      "sourceHandle": "source-point-0",
+      "targetHandle": "target-point-0",
+      "markerEnd": {
+        "type": "arrow"
+      },
+      "style": {
+        "stroke": "#333"
+      },
+      "data": {
+        "weight": 1
+      }
+    }
+  ],
+  "statistics": {
+    "places": 5,
+    "transitions": 8,
+    "arcs": 18,
+    "initial_places": 1,
+    "final_places": 1
+  },
+  "selectedElement": null,
+  "metadata": {}
+}

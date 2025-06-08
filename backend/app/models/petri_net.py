@@ -6,9 +6,10 @@ class Position(BaseModel):
     y: float
 
 class NodeData(BaseModel):
+    id: str
+    type: str  # 'place' or 'transition'
     label: str
     name: str
-    type: str
     tokens: Optional[int] = None
     isInitialMarking: Optional[bool] = False
     isFinalMarking: Optional[bool] = False
@@ -21,20 +22,27 @@ class Node(BaseModel):
     position: Position
     data: NodeData
 
+class EdgeData(BaseModel):
+    weight: Optional[int] = 1
+
 class Edge(BaseModel):
     id: str
     source: str
     target: str
     sourceHandle: Optional[str] = None
     targetHandle: Optional[str] = None
-    weight: Optional[int] = 1  # Default weight is 1
+    markerEnd: Optional[Dict[str, str]] = None
+    style: Optional[Dict[str, str]] = None
+    data: Optional[EdgeData] = None
 
 class PetriNetData(BaseModel):
+    networkId: Optional[str] = None
+    networkName: Optional[str] = None
     nodes: List[Node]
     edges: List[Edge]
     statistics: Dict[str, Any]
-    networkId: Optional[str] = None
-    networkName: Optional[str] = None
+    selectedElement: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
 
 class UploadResponse(BaseModel):
     success: bool

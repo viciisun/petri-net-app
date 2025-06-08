@@ -1,36 +1,36 @@
-# APNML 导入功能实现总结
+# APNML Import Functionality Implementation Summary
 
-## 📋 功能概述
+## Feature Overview
 
-成功实现了 APNML (Algebraic Petri Net Markup Language) 文件的导入功能，使用户能够导入和可视化 APNML 格式的 Petri 网模型。
+Successfully implemented APNML (Algebraic Petri Net Markup Language) file import functionality, enabling users to import and visualize APNML format Petri net models.
 
-## 🔍 格式分析结果
+## Format Analysis Results
 
-### APNML vs PNML 对比
+### APNML vs PNML Comparison
 
-通过分析提供的示例文件发现：
+Analysis of the provided sample files revealed:
 
-1. **XML 结构完全相同** - APNML 使用标准 PNML XML 格式
-2. **元素类型相同** - place, transition, arc, graphics, finalmarkings 等
-3. **网络类型相同** - 都使用`http://www.pnml.org/version-2009/grammar/pnmlcoremodel`
-4. **主要区别** - 仅在数据内容上有差异（活动名称、网络描述等）
+1. **Identical XML Structure** - APNML uses standard PNML XML format
+2. **Same Element Types** - place, transition, arc, graphics, finalmarkings, etc.
+3. **Same Network Type** - Both use `http://www.pnml.org/version-2009/grammar/pnmlcoremodel`
+4. **Main Difference** - Only differs in data content (activity names, network descriptions, etc.)
 
-**重要发现**：APNML 实际上遵循标准 PNML 格式规范，只是文件扩展名不同。
+**Important Finding**: APNML actually follows standard PNML format specifications, differing only in file extension.
 
-## 🛠️ 技术实现
+## Technical Implementation
 
-### 1. 后端 API 扩展
+### 1. Backend API Extension
 
-**文件**: `backend/app/api/petri_net.py`
+**File**: `backend/app/api/petri_net.py`
 
-**修改内容**:
+**Modifications**:
 
-- 扩展 `/api/upload-pnml` 端点以支持 `.apnml` 文件
-- 更新文件类型验证逻辑
-- 添加文件类型识别和相应的成功消息
+- Extended `/api/upload-pnml` endpoint to support `.apnml` files
+- Updated file type validation logic
+- Added file type recognition and corresponding success messages
 
 ```python
-# 支持PNML和APNML文件
+# Support PNML and APNML files
 if not (file.filename.endswith('.pnml') or file.filename.endswith('.apnml')):
     raise HTTPException(
         status_code=400,
@@ -38,151 +38,151 @@ if not (file.filename.endswith('.pnml') or file.filename.endswith('.apnml')):
     )
 ```
 
-### 2. 前端 UI 更新
+### 2. Frontend UI Updates
 
-**文件**: `frontend/src/components/Header.jsx`
+**File**: `frontend/src/components/Header.jsx`
 
-**新增功能**:
+**New Features**:
 
-- 在 Import 下拉菜单中添加"APNML Model"选项
-- 添加专门的 APNML 导入处理函数
-- 更新文件选择器以支持`.apnml`扩展名
-- 添加适当的图标和用户界面元素
+- Added "APNML Model" option to Import dropdown menu
+- Added dedicated APNML import handler function
+- Updated file selector to support `.apnml` extension
+- Added appropriate icons and user interface elements
 
-**UI 改进**:
+**UI Improvements**:
 
 ```jsx
-// 新增APNML导入选项
+// Added APNML import option
 <button
   onClick={handleApnmlImportClick}
   className={styles.dropdownItem}
   disabled={isLoading}
 >
-  <span className={styles.itemIcon}>📋</span>
+  <span className={styles.itemIcon}></span>
   APNML Model
 </button>
 ```
 
-### 3. PM4Py 兼容性验证
+### 3. PM4Py Compatibility Verification
 
-**验证结果**: ✅ PM4Py 完全支持 APNML 文件导入
+**Verification Result**: PM4Py fully supports APNML file import
 
-**测试文件**: `backend/test_apnml_import.py`
+**Test File**: `backend/test_apnml_import.py`
 
-- 成功导入 APNML 文件
-- 正确解析所有元素（places, transitions, arcs）
-- 保持数据完整性
+- Successfully imported APNML files
+- Correctly parsed all elements (places, transitions, arcs)
+- Maintained data integrity
 
-## 📊 功能特性
+## Feature Characteristics
 
-### 支持的功能
+### Supported Features
 
-- ✅ APNML 文件导入和解析
-- ✅ 可视化显示
-- ✅ 布局调整（水平/垂直）
-- ✅ 导出为 PNML 格式
-- ✅ 图像导出（PNG/JPEG）
-- ✅ 错误处理和用户反馈
+- APNML file import and parsing
+- Visualization display
+- Layout adjustment (horizontal/vertical)
+- Export to PNML format
+- Image export (PNG/JPEG)
+- Error handling and user feedback
 
-### 数据保真度
+### Data Fidelity
 
-- ✅ 完整保留 place 和 transition 信息
-- ✅ 保持 arc 连接和权重
-- ✅ 保留初始和最终标记
-- ✅ 支持 invisible transitions
-- ✅ 保持网络元数据
+- Complete preservation of place and transition information
+- Maintained arc connections and weights
+- Preserved initial and final markings
+- Support for invisible transitions
+- Maintained network metadata
 
-## 🧪 测试验证
+## Testing Verification
 
-### 1. PM4Py 导入测试
+### 1. PM4Py Import Testing
 
 ```bash
 ~/miniforge3/bin/python test_apnml_import.py
 ```
 
-**结果**:
+**Results**:
 
-- ✅ 成功导入 APNML 文件
-- ✅ 正确解析 4 个 places 和 4 个 transitions
-- ✅ 保持所有 arc 连接
-- ✅ 正确处理初始和最终标记
+- Successfully imported APNML files
+- Correctly parsed 4 places and 4 transitions
+- Maintained all arc connections
+- Correctly handled initial and final markings
 
-### 2. API 端点测试
+### 2. API Endpoint Testing
 
 ```bash
 ~/miniforge3/bin/python test_apnml_api.py
 ```
 
-**测试内容**:
+**Test Content**:
 
-- API 文件上传功能
-- 数据结构验证
-- 错误处理测试
+- API file upload functionality
+- Data structure validation
+- Error handling testing
 
-## 🚀 使用方法
+## Usage Instructions
 
-### 用户操作流程
+### User Operation Flow
 
-1. 点击"Import"按钮
-2. 选择"APNML Model"选项
-3. 选择`.apnml`文件
-4. 系统自动导入并可视化
-5. 可进行布局调整、编辑、导出等操作
+1. Click "Import" button
+2. Select "APNML Model" option
+3. Choose `.apnml` file
+4. System automatically imports and visualizes
+5. Can perform layout adjustments, editing, exporting, etc.
 
-### 支持的文件格式
+### Supported File Formats
 
-- `.apnml` - APNML 格式文件
-- `.pnml` - 标准 PNML 格式文件
-- `.xml` - XML 格式的 Petri 网文件
+- `.apnml` - APNML format files
+- `.pnml` - Standard PNML format files
+- `.xml` - XML format Petri net files
 
-## 🔧 技术架构
+## Technical Architecture
 
-### 数据流
+### Data Flow
 
 ```
-APNML文件 → 前端文件选择 → 后端API → PM4Py解析 → 数据转换 → 前端可视化
+APNML File → Frontend File Selection → Backend API → PM4Py Parsing → Data Conversion → Frontend Visualization
 ```
 
-### 关键组件
+### Key Components
 
-1. **前端**: React 组件处理文件选择和 UI 交互
-2. **后端**: FastAPI 处理文件上传和解析
-3. **解析器**: PM4Py 处理 APNML/PNML 格式解析
-4. **可视化**: React Flow 进行图形渲染
+1. **Frontend**: React components handle file selection and UI interaction
+2. **Backend**: FastAPI handles file upload and parsing
+3. **Parser**: PM4Py handles APNML/PNML format parsing
+4. **Visualization**: React Flow performs graphic rendering
 
-## 📝 开发注意事项
+## Development Notes
 
-### 兼容性
+### Compatibility
 
-- APNML 文件使用标准 PNML 格式，无需特殊解析逻辑
-- PM4Py 原生支持，无需额外依赖
-- 前端 UI 保持一致性，用户体验良好
+- APNML files use standard PNML format, no special parsing logic needed
+- PM4Py native support, no additional dependencies required
+- Frontend UI maintains consistency, good user experience
 
-### 扩展性
+### Extensibility
 
-- 可轻松添加其他 Petri 网格式支持
-- API 设计支持未来格式扩展
-- 前端菜单结构便于添加新选项
+- Can easily add support for other Petri net formats
+- API design supports future format extensions
+- Frontend menu structure facilitates adding new options
 
-## ✅ 完成状态
+## Completion Status
 
-- [x] 格式分析和兼容性验证
-- [x] 后端 API 扩展
-- [x] 前端 UI 更新
-- [x] PM4Py 集成测试
-- [x] 错误处理实现
-- [x] 用户界面优化
-- [x] 文档编写
+- [x] Format analysis and compatibility verification
+- [x] Backend API extension
+- [x] Frontend UI updates
+- [x] PM4Py integration testing
+- [x] Error handling implementation
+- [x] User interface optimization
+- [x] Documentation writing
 
-## 🎯 下一步建议
+## Next Step Recommendations
 
-1. **服务器测试**: 启动完整服务器进行端到端测试
-2. **用户测试**: 使用实际 APNML 文件进行用户验收测试
-3. **性能优化**: 对大型 APNML 文件进行性能测试
-4. **文档更新**: 更新用户手册和 API 文档
+1. **Server Testing**: Launch complete server for end-to-end testing
+2. **User Testing**: Conduct user acceptance testing with actual APNML files
+3. **Performance Optimization**: Performance testing with large APNML files
+4. **Documentation Updates**: Update user manual and API documentation
 
 ---
 
-**实现完成时间**: 2024 年
-**开发者**: AI Assistant
-**状态**: 已完成，待测试验证
+**Implementation Completion Time**: 2024
+**Developer**: AI Assistant
+**Status**: Completed, awaiting testing verification

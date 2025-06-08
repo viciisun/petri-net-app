@@ -2,24 +2,24 @@
 
 A modern, interactive web application for visualizing, editing, and analyzing Petri net models. Built with React and FastAPI, this tool provides a comprehensive platform for working with PNML (Petri Net Markup Language) files.
 
-## 🌟 Features
+## Features
 
 ### Core Functionality
 
-#### 📁 Import & Export
+#### Import & Export
 
 - **PNML Import**: Upload and parse PNML files with full PM4Py integration
 - **Image Export**: Export visualizations as high-quality PNG or JPEG images
 - **Future Support**: Event log files (CSV, XES) and PNML export (coming soon)
 
-#### 🎨 Visualization
+#### Visualization
 
 - **Interactive Canvas**: Powered by React Flow for smooth, responsive interactions
 - **Custom Node Types**: Specialized Place and Transition node components
 - **Smart Layouts**: Automatic positioning with Dagre algorithm (horizontal/vertical)
 - **Visual Indicators**: Color-coded markings, invisible transitions, and connection handles
 
-#### ✏️ Editing Capabilities
+#### Editing Capabilities
 
 - **Node Management**: Add, delete, and modify places and transitions
 - **Property Editing**: Real-time editing of node properties (ID, name, tokens, etc.)
@@ -28,21 +28,21 @@ A modern, interactive web application for visualizing, editing, and analyzing Pe
 
 ### Advanced Features
 
-#### 🔧 Intelligent Node Handling
+#### Intelligent Node Handling
 
 - **Attach Points**: Dynamic connection handles based on node positioning
 - **ID Management**: Automatic ID generation and duplicate prevention
 - **Type Validation**: Enforced Petri net rules (places ↔ transitions only)
 - **Auto-reconnection**: Smart edge updates when deleting intermediate nodes
 
-#### 📊 Real-time Analytics
+#### Real-time Analytics
 
 - **Live Statistics**: Automatic calculation of network metrics
 - **Marking Detection**: Initial and final marking identification
 - **Transition Analysis**: Visible vs. invisible transition tracking
 - **Token Counting**: Real-time token distribution monitoring
 
-#### 🎯 User Experience
+#### User Experience
 
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Keyboard Shortcuts**: Efficient navigation and editing
@@ -51,21 +51,21 @@ A modern, interactive web application for visualizing, editing, and analyzing Pe
 
 ### Technical Features
 
-#### 🏗️ Architecture
+#### Architecture
 
 - **Frontend**: React 19 + Vite + Zustand state management
 - **Backend**: FastAPI + PM4Py for PNML processing
 - **Visualization**: React Flow with custom node components
 - **Layout**: Dagre algorithm for automatic graph positioning
 
-#### 🔄 Data Flow
+#### Data Flow
 
 - **Real-time Sync**: Instant updates between UI and state
 - **Efficient Rendering**: Optimized re-rendering with React optimizations
 - **Memory Management**: In-memory caching for fast access
 - **API Integration**: RESTful backend communication
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -116,7 +116,7 @@ A modern, interactive web application for visualizing, editing, and analyzing Pe
    - Backend API available at `http://localhost:8000`
    - API documentation at `http://localhost:8000/docs`
 
-## 📖 User Guide
+## User Guide
 
 ### Importing PNML Files
 
@@ -169,7 +169,7 @@ A modern, interactive web application for visualizing, editing, and analyzing Pe
    - **JPEG Image**: Compressed image format
    - **PNML Model**: (Coming soon) Export current state as PNML
 
-## 🛠️ Development
+## Development
 
 ### Project Structure
 
@@ -238,7 +238,7 @@ The application uses Zustand for state management with the following key state:
 }
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -263,7 +263,7 @@ export default defineConfig({
 });
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Backend Testing
 
@@ -279,36 +279,36 @@ cd frontend
 npm run test
 ```
 
-## 📋 Supported PNML Features
+## Supported PNML Features
 
 ### Fully Supported
 
-- ✅ Places with initial markings
-- ✅ Transitions (visible and invisible)
-- ✅ Arcs with weights
-- ✅ Final markings
-- ✅ Network metadata (ID, name)
-- ✅ Original element IDs preservation
+- Places with initial markings
+- Transitions (visible and invisible)
+- Arcs with weights
+- Final markings
+- Network metadata (ID, name)
+- Original element IDs preservation
 
 ### Partially Supported
 
-- ⚠️ Complex arc expressions (simplified to weights)
-- ⚠️ Advanced PNML extensions (basic support)
+- Complex arc expressions (simplified to weights)
+- Advanced PNML extensions (basic support)
 
 ### Future Support
 
-- 🔄 Event log import (CSV, XES)
-- 🔄 PNML export functionality
-- 🔄 Process mining integration
-- 🔄 Advanced analysis features
+- Event log import (CSV, XES)
+- PNML export functionality
+- Process mining integration
+- Advanced analysis features
 
-## 🐛 Known Issues
+## Known Issues
 
 1. **Large Networks**: Performance may degrade with 100+ nodes
 2. **Mobile Touch**: Some drag operations may be less responsive on mobile
 3. **Browser Compatibility**: Requires modern browser with ES6+ support
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -323,18 +323,18 @@ npm run test
 - Update documentation for API changes
 - Ensure cross-browser compatibility
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **PM4Py**: Excellent Python library for process mining
 - **React Flow**: Powerful graph visualization library
 - **FastAPI**: Modern, fast Python web framework
 - **Dagre**: Graph layout algorithm implementation
 
-## 📞 Support
+## Support
 
 For questions, issues, or contributions:
 
@@ -344,4 +344,4 @@ For questions, issues, or contributions:
 
 ---
 
-**Built with ❤️ using React, FastAPI, and PM4Py**
+**Built with love using React, FastAPI, and PM4Py**

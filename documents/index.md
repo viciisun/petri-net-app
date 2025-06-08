@@ -35,7 +35,7 @@ Welcome to the comprehensive documentation for the Petri Net Visualizer applicat
 - API documentation
 - Troubleshooting and support
 
-## 🎯 Quick Navigation
+## Quick Navigation
 
 ### For Users
 
@@ -56,34 +56,34 @@ Welcome to the comprehensive documentation for the Petri Net Visualizer applicat
 - **Performance**: See [System Architecture - Performance](./system-architecture.md#performance-optimizations)
 - **Security**: See [System Architecture - Security](./system-architecture.md#security-considerations)
 
-## 🔍 Key Features Documented
+## Key Features Documented
 
 ### Core Functionality
 
-- ✅ PNML file import and parsing
-- ✅ Interactive Petri net visualization
-- ✅ Real-time editing capabilities
-- ✅ Image export (PNG/JPEG)
-- ✅ Automatic layout algorithms
+- PNML file import and parsing
+- Interactive Petri net visualization
+- Real-time editing capabilities
+- Image export (PNG/JPEG)
+- Automatic layout algorithms
 
 ### Advanced Features
 
-- ✅ Bipartite graph validation
-- ✅ Invisible transition support
-- ✅ Real-time statistics calculation
-- ✅ Dynamic connection handles
-- ✅ Reconnectable edges
-- ✅ Smart ID management
+- Bipartite graph validation
+- Invisible transition support
+- Real-time statistics calculation
+- Dynamic connection handles
+- Reconnectable edges
+- Smart ID management
 
 ### Technical Implementation
 
-- ✅ React 19 + Vite frontend
-- ✅ FastAPI + PM4Py backend
-- ✅ Zustand state management
-- ✅ React Flow visualization
-- ✅ Dagre layout engine
+- React 19 + Vite frontend
+- FastAPI + PM4Py backend
+- Zustand state management
+- React Flow visualization
+- Dagre layout engine
 
-## 📋 Documentation Standards
+## Documentation Standards
 
 All documentation follows these standards:
 
@@ -93,7 +93,7 @@ All documentation follows these standards:
 - **Cross-references**: Links between related sections
 - **Version Information**: Current technology versions
 
-## 🔄 Document Updates
+## Document Updates
 
 This documentation is maintained alongside the codebase. When contributing:
 

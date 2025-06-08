@@ -6,7 +6,10 @@ import pm4py
 from pm4py.objects.petri_net.obj import PetriNet, Marking
 from pm4py.objects.petri_net.utils import petri_utils
 from pm4py.objects.petri_net.exporter import exporter as pnml_exporter
-from ..models.petri_net import Node, Edge, NodeData, Position, PetriNetData
+from pm4py.algo.simulation.playout.petri_net import algorithm as playout_algorithm
+import pandas as pd
+from datetime import datetime, timedelta
+from ..models.petri_net import Node, Edge, NodeData, Position, PetriNetData, EdgeData
 
 class PM4PyService:
     def __init__(self):
@@ -123,9 +126,10 @@ class PM4PyService:
                 type="place",
                 position=Position(x=0, y=0),  # Will be positioned by frontend layout
                 data=NodeData(
+                    id=place_id,
+                    type="place",
                     label=place_id,
                     name=place_name,
-                    type="place",
                     tokens=tokens,
                     isInitialMarking=is_initial_marking,
                     isFinalMarking=is_final_marking,
@@ -158,9 +162,10 @@ class PM4PyService:
                 type="transition",
                 position=Position(x=0, y=0),  # Will be positioned by frontend layout
                 data=NodeData(
+                    id=transition_id,
+                    type="transition",
                     label=transition_id,
                     name=transition_name,
-                    type="transition",
                     isInvisible=is_invisible,
                     attachPoints=4
                 )
@@ -187,7 +192,7 @@ class PM4PyService:
                 id=edge_id,
                 source=source_id,
                 target=target_id,
-                weight=weight
+                data=EdgeData(weight=weight)
             )
             edges.append(edge)
         
@@ -300,13 +305,13 @@ class PM4PyService:
             if source_obj and target_obj:
                 arc = petri_utils.add_arc_from_to(source_obj, target_obj, net)
                 # Set weight if specified
-                if hasattr(edge, 'weight') and edge.weight and edge.weight != 1:
-                    arc.weight = edge.weight
+                if edge.data and hasattr(edge.data, 'weight') and edge.data.weight and edge.data.weight != 1:
+                    arc.weight = edge.data.weight
         
         # Create initial marking
         initial_marking = Marking()
         for node in petri_net_data.nodes:
-            if node.type == "place" and hasattr(node.data, 'tokens') and node.data.tokens > 0:
+            if node.type == "place" and hasattr(node.data, 'tokens') and node.data.tokens is not None and node.data.tokens > 0:
                 place_obj = place_objects[node.id]
                 initial_marking[place_obj] = node.data.tokens
         
@@ -327,4 +332,78 @@ class PM4PyService:
         for temp_file in self.temp_files:
             if os.path.exists(temp_file):
                 os.unlink(temp_file)
-        self.temp_files.clear() 
+        self.temp_files.clear()
+
+    def export_to_event_log(self, petri_net_data: PetriNetData, config: Dict[str, Any] = None) -> str:
+        """Export PetriNetData to Event Log CSV string"""
+        try:
+            # Default configuration
+            default_config = {
+                'no_traces': 100,
+                'max_trace_length': 50,
+                'case_id_key': 'case:concept:name',
+                'activity_key': 'concept:name',
+                'timestamp_key': 'time:timestamp',
+                'initial_timestamp': datetime.now()
+            }
+            
+            # Merge with user config
+            if config:
+                default_config.update(config)
+            
+            # Rebuild PM4Py objects from frontend data
+            net, initial_marking, final_marking = self._rebuild_pm4py_objects(petri_net_data)
+            
+            # Prepare parameters for PM4Py simulation
+            parameters = {
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.NO_TRACES: default_config['no_traces'],
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.MAX_TRACE_LENGTH: default_config['max_trace_length'],
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.CASE_ID_KEY: default_config['case_id_key'],
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.ACTIVITY_KEY: default_config['activity_key'],
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.TIMESTAMP_KEY: default_config['timestamp_key'],
+                playout_algorithm.Variants.BASIC_PLAYOUT.value.Parameters.INITIAL_TIMESTAMP: int(default_config['initial_timestamp'].timestamp())
+            }
+            
+            # Generate Event Log using PM4Py simulation
+            event_log = playout_algorithm.apply(
+                net, 
+                initial_marking, 
+                final_marking, 
+                parameters=parameters
+            )
+            
+            # Convert PM4Py EventLog to pandas DataFrame
+            events_data = []
+            for trace in event_log:
+                case_id = trace.attributes.get(default_config['case_id_key'], f"case_{len(events_data)}")
+                
+                for event in trace:
+                    event_data = {
+                        'case_id': case_id,
+                        'activity': event.get(default_config['activity_key'], 'Unknown'),
+                        'timestamp': event.get(default_config['timestamp_key'], datetime.now()),
+                        'lifecycle': event.get('lifecycle:transition', 'complete')
+                    }
+                    
+                    # Add any additional event attributes
+                    for key, value in event.items():
+                        if key not in [default_config['activity_key'], default_config['timestamp_key'], 'lifecycle:transition']:
+                            event_data[key] = value
+                    
+                    events_data.append(event_data)
+            
+            # Create DataFrame
+            df = pd.DataFrame(events_data)
+            
+            # Sort by timestamp
+            if not df.empty:
+                df = df.sort_values('timestamp')
+                df = df.reset_index(drop=True)
+            
+            # Convert to CSV string
+            csv_string = df.to_csv(index=False)
+            
+            return csv_string
+            
+        except Exception as e:
+            raise Exception(f"Failed to export Event Log: {str(e)}") 

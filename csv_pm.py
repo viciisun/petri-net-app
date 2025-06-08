@@ -3,10 +3,10 @@ from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.algo.discovery.alpha import algorithm as alpha_miner
 from pm4py.visualization.petri_net import visualizer as pn_visualizer
 
-# 读取 CSV 文件
+# Read CSV file
 df = pd.read_csv('frontend/public/Event_Log.csv')
 
-# 将 DataFrame 转换为事件日志
+# Convert DataFrame to event log
 parameters = {
     "case_id_key": "event_id",
     "activity_key": "concept:name",
@@ -14,9 +14,9 @@ parameters = {
 }
 
 event_log = log_converter.apply(df, variant=log_converter.Variants.TO_EVENT_LOG, parameters=parameters)
-# 应用 Alpha Miner 算法生成 Petri 网
+# Apply Alpha Miner algorithm to generate Petri net
 net, initial_marking, final_marking = alpha_miner.apply(event_log)
 
-# 可视化 Petri 网
+# Visualize Petri net
 gviz = pn_visualizer.apply(net, initial_marking, final_marking)
 pn_visualizer.view(gviz)

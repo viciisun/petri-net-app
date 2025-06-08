@@ -17,7 +17,7 @@ def test_apnml_api():
     apnml_file = '../frontend/public/student_learning_process (1).apnml'
     
     if not os.path.exists(apnml_file):
-        print(f"❌ APNML文件不存在: {apnml_file}")
+        print(f"APNML file does not exist: {apnml_file}")
         return False
     
     try:
@@ -30,45 +30,37 @@ def test_apnml_api():
             
         if response.status_code == 200:
             data = response.json()
-            print('✅ APNML API导入成功!')
-            print(f'消息: {data.get("message", "N/A")}')
-            print(f'Petri网ID: {data.get("petri_net_id", "N/A")}')
+            print('APNML API import successful!')
+            print(f'Message: {data.get("message", "N/A")}')
+            print(f'Petri Net ID: {data.get("petri_net_id", "N/A")}')
             
-            # Check data structure
-            if 'data' in data:
-                petri_data = data['data']
-                print(f'网络名称: {petri_data.get("networkName", "N/A")}')
-                print(f'网络ID: {petri_data.get("networkId", "N/A")}')
-                print(f'节点数量: {len(petri_data.get("nodes", []))}')
-                print(f'边数量: {len(petri_data.get("edges", []))}')
-                
-                # Print some node details
-                nodes = petri_data.get("nodes", [])
-                places = [n for n in nodes if n.get("type") == "place"]
-                transitions = [n for n in nodes if n.get("type") == "transition"]
-                
-                print(f'Places: {len(places)}')
-                print(f'Transitions: {len(transitions)}')
-                
-                # Show first few nodes
-                print('\n=== 前几个节点 ===')
+            petri_data = data.get('petri_net', {})
+            print(f'Network Name: {petri_data.get("networkName", "N/A")}')
+            print(f'Network ID: {petri_data.get("networkId", "N/A")}')
+            print(f'Node Count: {len(petri_data.get("nodes", []))}')
+            print(f'Edge Count: {len(petri_data.get("edges", []))}')
+            
+            # Show first few nodes for verification
+            nodes = petri_data.get('nodes', [])
+            if nodes:
+                print('\n=== First Few Nodes ===')
                 for i, node in enumerate(nodes[:4]):
                     print(f'  {i+1}. {node.get("data", {}).get("name", "N/A")} ({node.get("type", "N/A")})')
-                
+            
             return True
             
         else:
-            print(f'❌ API请求失败: {response.status_code}')
-            print(f'错误信息: {response.text}')
+            print(f'API request failed: {response.status_code}')
+            print(f'Error Message: {response.text}')
             return False
             
     except requests.exceptions.ConnectionError:
-        print('❌ 无法连接到服务器。请确保后端服务器正在运行 (http://localhost:8000)')
+        print('Unable to connect to server. Please ensure backend server is running (http://localhost:8000)')
         return False
     except Exception as e:
-        print(f'❌ 测试失败: {e}')
+        print(f'Test failed: {e}')
         return False
 
 if __name__ == "__main__":
-    print("测试APNML API导入功能...")
+    print("Testing APNML API import functionality...")
     test_apnml_api() 
